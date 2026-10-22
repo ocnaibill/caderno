@@ -1,0 +1,27 @@
+# SO
+.DS_Store
+Thumbs.db
+
+# Bun / Node
+node_modules/
+
+# Build
+dist/
+build/
+
+# Env e segredos
+.env
+.env.local
+.env.*.local
+
+# Banco local (índice derivado do markdown — reconstruível, nunca a fonte da verdade)
+*.sqlite
+*.sqlite3
+*.db
+
+# Logs
+*.log
+
+# Editor
+.vscode/
+.idea/
