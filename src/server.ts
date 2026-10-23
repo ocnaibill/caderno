@@ -2,7 +2,13 @@ import { getDb } from "./db/client.ts";
 import { buscarUltimaFolhaPublicada } from "./content/repo.ts";
 import { responderInteracao } from "./pages/api.ts";
 import { renderizarPaginaArquivo } from "./pages/arquivo.ts";
-import { renderizarPaginaAssinar, responderAssinatura, responderCancelamento } from "./pages/assinar.ts";
+import {
+  renderizarPaginaAssinar,
+  renderizarPaginaGerenciar,
+  responderAssinatura,
+  responderCancelamento,
+  responderGerenciar,
+} from "./pages/assinar.ts";
 import { renderizarPaginaEu } from "./pages/eu.ts";
 import { renderizarPaginaFolha, responderBaixarMarkdown } from "./pages/folha.ts";
 import { responderRobots, responderRss, responderSitemap } from "./pages/seo.ts";
@@ -32,6 +38,10 @@ const server = Bun.serve({
       POST: (req) => responderAssinatura(req),
     },
     "/assinar/cancelar": (req) => responderCancelamento(new URL(req.url)),
+    "/assinar/gerenciar": {
+      GET: (req) => renderizarPaginaGerenciar(new URL(req.url)),
+      POST: (req) => responderGerenciar(req),
+    },
     "/eu": () => renderizarPaginaEu(),
     "/robots.txt": () => responderRobots(),
     "/sitemap.xml": () => responderSitemap(),

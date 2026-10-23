@@ -1,6 +1,8 @@
 import { resolve } from "node:path";
 import {
   type FormatoEmail,
+  atualizarFormatoAssinante,
+  buscarAssinantePorToken,
   buscarRecentes,
   buscarUltimaFolhaPublicada,
   cancelarAssinante,
@@ -37,11 +39,16 @@ function renderizarAmostra(): string {
 }
 
 function renderizarMensagem(url: URL): string {
+  const token = url.searchParams.get("token");
+  const linkGerenciar = token
+    ? ` <a href="/assinar/gerenciar?token=${encodeURIComponent(token)}">Gerenciar assinatura</a>.`
+    : "";
+
   if (url.searchParams.get("sucesso") === "1") {
-    return `<p class="assinar-mensagem assinar-mensagem--sucesso">Pronto — você está na lista. Até a próxima folha.</p>`;
+    return `<p class="assinar-mensagem assinar-mensagem--sucesso">Pronto — você está na lista. Até a próxima folha.${linkGerenciar}</p>`;
   }
   if (url.searchParams.get("sucesso") === "ja") {
-    return `<p class="assinar-mensagem">Esse e-mail já está inscrito — nada pra fazer aqui.</p>`;
+    return `<p class="assinar-mensagem">Esse e-mail já está inscrito.${linkGerenciar}</p>`;
   }
   if (url.searchParams.get("erro") === "email") {
     return `<p class="assinar-mensagem assinar-mensagem--erro">Esse e-mail não parece válido — confere e tenta de novo.</p>`;
@@ -151,7 +158,8 @@ export async function responderAssinatura(req: Request): Promise<Response> {
 
   const resultado = criarAssinante(email, formato);
   const sucesso = resultado.status === "nova" ? "1" : "ja";
-  return Response.redirect(`/assinar?sucesso=${sucesso}`, 303);
+  const tokenQs = resultado.token ? `&token=${encodeURIComponent(resultado.token)}` : "";
+  return Response.redirect(`/assinar?sucesso=${sucesso}${tokenQs}`, 303);
 }
 
 export function responderCancelamento(url: URL): Response {
@@ -179,4 +187,79 @@ export function responderCancelamento(url: URL): Response {
   return new Response(paginaHtml, {
     headers: { "Content-Type": "text/html; charset=utf-8" },
   });
+}
+
+export function renderizarPaginaGerenciar(url: URL): Response {
+  const token = url.searchParams.get("token") ?? "";
+  const assinante = token ? buscarAssinantePorToken(token) : undefined;
+
+  if (!assinante || assinante.status !== "ativo") {
+    const corpoPagina = `<div class="assinar">
+      <div class="assinar-principal">
+        <div class="assinar-card">
+          <h1 class="headline-lg">Link inválido</h1>
+          <p class="body-md">Esse link de gerenciamento não é válido, a assinatura já foi cancelada, ou o link está incompleto.</p>
+        </div>
+      </div>
+    </div>`;
+    return new Response(layout({ titulo: "Gerenciar assinatura", corpo: corpoPagina }), {
+      headers: { "Content-Type": "text/html; charset=utf-8" },
+    });
+  }
+
+  const salvo = url.searchParams.get("salvo") === "1";
+
+  const corpoPagina = `<div class="assinar">
+    <div class="assinar-principal">
+      <div class="assinar-card">
+        <h1 class="headline-lg">Gerenciar assinatura</h1>
+        <p class="body-md">${escapeHtml(assinante.email)}</p>
+
+        ${salvo ? `<p class="assinar-mensagem assinar-mensagem--sucesso">Preferência salva.</p>` : ""}
+
+        <form class="assinar-form" method="post" action="/assinar/gerenciar">
+          <input type="hidden" name="token" value="${escapeHtml(token)}" />
+          <fieldset class="assinar-formato">
+            <legend class="label-md">Preferência de Formato</legend>
+            <label class="assinar-formato__opcao">
+              <input type="radio" name="formato" value="texto_puro" ${assinante.formato_preferido === "texto_puro" ? "checked" : ""} />
+              <span>
+                <strong>Texto Puro</strong>
+                <small>Ideal para leitura minimalista, leitores e-ink ou clientes de texto simples.</small>
+              </span>
+            </label>
+            <label class="assinar-formato__opcao">
+              <input type="radio" name="formato" value="editorial" ${assinante.formato_preferido === "editorial" ? "checked" : ""} />
+              <span>
+                <strong>Edição Editorial</strong>
+                <small>Tipografia Newsreader, notas marginais diagramadas e detalhes em sépia.</small>
+              </span>
+            </label>
+          </fieldset>
+          <button type="submit">Salvar preferência</button>
+        </form>
+
+        <p class="label-sm assinar-frequencia">Não quer mais receber? <a href="/assinar/cancelar?token=${escapeHtml(token)}">Cancelar assinatura</a>.</p>
+      </div>
+    </div>
+  </div>`;
+
+  const paginaHtml = layout({
+    titulo: "Gerenciar assinatura",
+    corpo: corpoPagina,
+  });
+
+  return new Response(paginaHtml, {
+    headers: { "Content-Type": "text/html; charset=utf-8" },
+  });
+}
+
+export async function responderGerenciar(req: Request): Promise<Response> {
+  const dados = await req.formData();
+  const token = String(dados.get("token") ?? "");
+  const formatoBruto = String(dados.get("formato") ?? "texto_puro");
+  const formato: FormatoEmail = formatoBruto === "editorial" ? "editorial" : "texto_puro";
+
+  atualizarFormatoAssinante(token, formato);
+  return Response.redirect(`/assinar/gerenciar?token=${encodeURIComponent(token)}&salvo=1`, 303);
 }

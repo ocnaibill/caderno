@@ -22,6 +22,7 @@ Numeração `RN-nn`, decisões não se reabrem sem necessidade real de mudar. Re
 - **RN-10**: O RSS contém só folhas publicadas (`rascunho: false`), ordenadas por `data_publicacao` decrescente.
 - **RN-11** **(em aberto)**: O disparo do e-mail de uma nova edição é automático ao publicar, ou uma ação manual separada? Dado que o compromisso editorial do design é "frequência nada estrita, sei lá quando sai o próximo", eu sugiro **disparo manual** (uma ação explícita depois de revisar a folha publicada) para evitar envio acidental de rascunho ainda em polimento.
 - **RN-12** **(simplificação temporária)**: Hoje `criarAssinante` já coloca `status = 'ativo'` direto, sem double opt-in — não tem provedor de e-mail configurado ainda pra mandar o link de confirmação. Quando o Resend/Postmark entrar, troca pra `pendente_confirmacao` + e-mail de confirmação, como a proposta original previa.
+- **RN-14** **(simplificação temporária)**: Sem e-mail de verdade saindo, o link de "Gerenciar assinatura" (`/assinar/gerenciar?token=`) aparece direto na página de sucesso depois de assinar — é assim que a pessoa descobre o link hoje. Quando o envio de e-mail existir, esse link deve ir embutido no rodapé de toda edição (RF-19), e dá pra parar de expor ele na tela.
 
 ## Métricas (RN sobre métricas)
 

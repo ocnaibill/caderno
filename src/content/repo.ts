@@ -254,6 +254,7 @@ export type StatusAssinante = "pendente_confirmacao" | "ativo" | "cancelado";
 export interface ResultadoAssinatura {
   status: "nova" | "ja_existia";
   statusAssinante: StatusAssinante;
+  token?: string;
 }
 
 /**
@@ -265,7 +266,9 @@ export interface ResultadoAssinatura {
 export function criarAssinante(email: string, formato: FormatoEmail): ResultadoAssinatura {
   const db = getDb();
   const existente = db
-    .query<{ status: StatusAssinante }, [string]>("SELECT status FROM assinantes WHERE email = ?")
+    .query<{ status: StatusAssinante; token_gerenciamento: string }, [string]>(
+      "SELECT status, token_gerenciamento FROM assinantes WHERE email = ?",
+    )
     .get(email);
 
   if (existente) {
@@ -273,9 +276,9 @@ export function criarAssinante(email: string, formato: FormatoEmail): ResultadoA
       db.query(
         "UPDATE assinantes SET status = 'ativo', formato_preferido = ?, cancelado_em = NULL WHERE email = ?",
       ).run(formato, email);
-      return { status: "nova", statusAssinante: "ativo" };
+      return { status: "nova", statusAssinante: "ativo", token: existente.token_gerenciamento };
     }
-    return { status: "ja_existia", statusAssinante: existente.status };
+    return { status: "ja_existia", statusAssinante: existente.status, token: existente.token_gerenciamento };
   }
 
   const token = crypto.randomUUID();
@@ -284,7 +287,33 @@ export function criarAssinante(email: string, formato: FormatoEmail): ResultadoA
      VALUES (?, ?, 'ativo', ?)`,
   ).run(email, formato, token);
 
-  return { status: "nova", statusAssinante: "ativo" };
+  return { status: "nova", statusAssinante: "ativo", token };
+}
+
+export interface AssinanteGerenciavel {
+  email: string;
+  formato_preferido: FormatoEmail;
+  status: StatusAssinante;
+}
+
+export function buscarAssinantePorToken(token: string): AssinanteGerenciavel | undefined {
+  const db = getDb();
+  return (
+    db
+      .query<AssinanteGerenciavel, [string]>(
+        "SELECT email, formato_preferido, status FROM assinantes WHERE token_gerenciamento = ?",
+      )
+      .get(token) ?? undefined
+  );
+}
+
+/** RF-19: trocar o formato preferido sem precisar de login, só com o token. */
+export function atualizarFormatoAssinante(token: string, formato: FormatoEmail): boolean {
+  const db = getDb();
+  const linha = db
+    .query("UPDATE assinantes SET formato_preferido = ? WHERE token_gerenciamento = ? AND status = 'ativo'")
+    .run(formato, token);
+  return linha.changes > 0;
 }
 
 /** RF-19/RN-07: cancelamento self-service, sem login, só com o token do e-mail. */
