@@ -15,8 +15,7 @@ build/
 .env.*.local
 
 # Banco local (índice derivado do markdown — reconstruível, nunca a fonte da verdade)
-*.sqlite
-*.sqlite3
+*.sqlite*
 *.db
 
 # Logs
