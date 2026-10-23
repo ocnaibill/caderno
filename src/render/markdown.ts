@@ -8,6 +8,18 @@ export interface Secao {
 
 const MARCADOR_SECAO_OCULTA = /\{oculto\}\s*$/;
 
+// parseInline() do marked já devolve HTML com entidades escapadas — desfaz
+// isso pra guardar texto puro em `secoes`, já que quem usa `texto` (o índice
+// da folha) escapa de novo na hora de montar o HTML (ver folha.ts).
+function desescaparEntidades(texto: string): string {
+  return texto
+    .replaceAll("&lt;", "<")
+    .replaceAll("&gt;", ">")
+    .replaceAll("&quot;", '"')
+    .replaceAll("&#39;", "'")
+    .replaceAll("&amp;", "&");
+}
+
 function slugify(texto: string): string {
   return texto
     .normalize("NFD")
@@ -39,10 +51,12 @@ export function renderizarCorpo(markdown: string): { html: string; secoes: Secao
     renderer: {
       heading(this: { parser: { parseInline(tokens: Tokens.Heading["tokens"]): string } }, { tokens, depth }: Tokens.Heading) {
         const htmlBruto = this.parser.parseInline(tokens);
-        const textoPuro = htmlBruto.replace(/<[^>]+>/g, "");
+        const textoPuro = desescaparEntidades(htmlBruto.replace(/<[^>]+>/g, ""));
         const oculto = MARCADOR_SECAO_OCULTA.test(textoPuro.trim());
         const textoLimpo = oculto ? textoPuro.replace(MARCADOR_SECAO_OCULTA, "").trim() : textoPuro;
-        const htmlLimpo = oculto ? htmlBruto.replace(MARCADOR_SECAO_OCULTA, "").trim() : htmlBruto;
+        const htmlLimpo = oculto
+          ? htmlBruto.replace(MARCADOR_SECAO_OCULTA, "").trim()
+          : htmlBruto;
 
         if (depth === 2) {
           const id = slugify(textoLimpo);
