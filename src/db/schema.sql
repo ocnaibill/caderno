@@ -49,6 +49,17 @@ CREATE TABLE IF NOT EXISTS pensamentos (
 
 -- Dados de runtime (não derivados de arquivo — ver docs/ARQUITETURA.md).
 
+-- Contadores de curtir/salvar. Sem conta de leitor, então o "não deixar
+-- curtir/salvar de novo" é responsabilidade do cliente (localStorage) — o
+-- servidor só aceita +1/-1 vindo do botão de curtir (Folha) e salvar
+-- (Arquivo). Tabela separada de `posts` (que é derivada/reconstruível) pra
+-- não perder esses números só por rodar reindex de novo.
+CREATE TABLE IF NOT EXISTS interacoes (
+  post_id INTEGER PRIMARY KEY REFERENCES posts(id) ON DELETE CASCADE,
+  curtidas INTEGER NOT NULL DEFAULT 0,
+  salvos INTEGER NOT NULL DEFAULT 0
+);
+
 -- Comentário é sempre tratado como anônimo publicamente (não indexado, sem
 -- exigir conta) — "nome" é só um campo livre opcional que o leitor pode
 -- preencher; em branco, aparece como "Anônimo" (RN-04).

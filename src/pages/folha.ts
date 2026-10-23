@@ -175,7 +175,7 @@ export function renderizarPaginaFolha(slug: string): Response {
             </div>
           </div>
           <div class="autoria__acoes">
-            <button type="button" data-acao="curtir" aria-label="Curtir"><span class="material-symbols-outlined">favorite</span></button>
+            <button type="button" data-acao="curtir" data-slug="${folha.slug}" aria-label="Curtir"><span class="material-symbols-outlined">favorite</span></button>
             <button type="button" data-acao="compartilhar" aria-label="Compartilhar"><span class="material-symbols-outlined">ios_share</span></button>
             <button type="button" data-acao="baixar" aria-label="Baixar"><span class="material-symbols-outlined">download</span></button>
           </div>

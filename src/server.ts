@@ -1,5 +1,6 @@
 import { getDb } from "./db/client.ts";
 import { buscarUltimaFolhaPublicada } from "./content/repo.ts";
+import { responderInteracao } from "./pages/api.ts";
 import { renderizarPaginaArquivo } from "./pages/arquivo.ts";
 import { renderizarPaginaFolha } from "./pages/folha.ts";
 
@@ -18,9 +19,15 @@ const server = Bun.serve({
       return Response.redirect(`/folha/${ultima.slug}`, 302);
     },
     "/folha/:slug": (req) => renderizarPaginaFolha(req.params.slug),
+    "/folha/:slug/interacao": {
+      POST: (req) => responderInteracao(req, req.params.slug),
+    },
     "/arquivo": (req) => renderizarPaginaArquivo(new URL(req.url)),
     "/public/estilo.css": new Response(Bun.file("src/public/estilo.css"), {
       headers: { "Content-Type": "text/css; charset=utf-8" },
+    }),
+    "/public/interacoes.js": new Response(Bun.file("src/public/interacoes.js"), {
+      headers: { "Content-Type": "text/javascript; charset=utf-8" },
     }),
   },
   fetch() {

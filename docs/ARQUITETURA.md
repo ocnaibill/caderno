@@ -20,6 +20,12 @@ O próprio `DESIGN.md` rejeita explicitamente "high-frequency motion" e clutter 
 - **Motion sutil**: `View Transitions API` nativa do browser + CSS, ou uma lib leve tipo `motion` (~4kb, sem framework), se algum dia fizer sentido — nada de animação estilo SPA.
 - **Válvula de escape**: se uma folha específica pedir um embed bem interativo (gráfico, mini-demo), isso vira uma "ilha" isolada — um `<script type="module">` só naquela página, podendo usar o que for preciso ali dentro — sem isso virar a arquitetura do site inteiro.
 
+### Curtir e salvar (primeiro exemplo real de "interatividade pontual")
+
+`src/public/interacoes.js` é o primeiro script vanilla do projeto — liga os botões `[data-acao="curtir"]` (Folha) e `[data-acao="salvar"]` (Arquivo) a `POST /folha/:slug/interacao`. Sem conta de leitor, então o toggle (já curtiu? já salvou?) é decidido pelo `localStorage` do navegador — o servidor só aceita o `+1`/`-1` que o cliente manda e nunca deixa o contador ir abaixo de zero. Ver tabela `interacoes` em [BANCO_DE_DADOS.md](BANCO_DE_DADOS.md).
+
+Isso não é à prova de spam (alguém pode limpar o `localStorage` e clicar de novo), mas pra um contador de "quanto as pessoas gostaram" num blog pessoal sem conta, é proporcional ao problema.
+
 ## Modelo de conteúdo: "misto"
 
 O Markdown é a **fonte da verdade**. O SQLite é só um **índice derivado**, reconstruível a qualquer momento a partir dos arquivos — nunca o contrário. Apagar o banco e reindexar do zero sempre tem que funcionar.

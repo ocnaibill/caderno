@@ -177,16 +177,59 @@ export function buscarTagsComContagem(): TagContagem[] {
     .all();
 }
 
+export interface DestaqueItem extends ArquivoItem {
+  salvos: number;
+}
+
 /** Destaques editoriais (RF-11) — folhas marcadas com `destaque: true` no frontmatter. */
-export function buscarDestaques(limite = 3): ArquivoItem[] {
+export function buscarDestaques(limite = 3): DestaqueItem[] {
   const db = getDb();
   return db
-    .query<ArquivoItem, [number]>(
-      `SELECT numero, slug, titulo, resumo, categoria, data_publicacao, caminho_arquivo
-       FROM posts
-       WHERE rascunho = 0 AND destaque = 1
-       ORDER BY data_publicacao DESC, numero DESC
+    .query<DestaqueItem, [number]>(
+      `SELECT p.numero, p.slug, p.titulo, p.resumo, p.categoria, p.data_publicacao, p.caminho_arquivo,
+              COALESCE(i.salvos, 0) AS salvos
+       FROM posts p
+       LEFT JOIN interacoes i ON i.post_id = p.id
+       WHERE p.rascunho = 0 AND p.destaque = 1
+       ORDER BY p.data_publicacao DESC, p.numero DESC
        LIMIT ?`,
     )
     .all(limite);
+}
+
+export interface Interacoes {
+  curtidas: number;
+  salvos: number;
+}
+
+export function buscarInteracoes(slug: string): Interacoes {
+  const db = getDb();
+  const linha = db
+    .query<Interacoes, [string]>(
+      `SELECT COALESCE(i.curtidas, 0) AS curtidas, COALESCE(i.salvos, 0) AS salvos
+       FROM posts p
+       LEFT JOIN interacoes i ON i.post_id = p.id
+       WHERE p.slug = ?`,
+    )
+    .get(slug);
+  return linha ?? { curtidas: 0, salvos: 0 };
+}
+
+export type TipoInteracao = "curtida" | "salvo";
+
+/** Ajusta curtidas/salvos em +1 ou -1 (toggle fica a cargo do cliente). Nunca deixa ir abaixo de 0. */
+export function ajustarInteracao(slug: string, tipo: TipoInteracao, delta: 1 | -1): Interacoes | undefined {
+  const db = getDb();
+  const post = db.query<{ id: number }, [string]>("SELECT id FROM posts WHERE slug = ?").get(slug);
+  if (!post) return undefined;
+
+  const coluna = tipo === "curtida" ? "curtidas" : "salvos";
+  db.query("INSERT OR IGNORE INTO interacoes (post_id) VALUES (?)").run(post.id);
+  db.query(`UPDATE interacoes SET ${coluna} = MAX(0, ${coluna} + ?) WHERE post_id = ?`).run(delta, post.id);
+
+  return db
+    .query<Interacoes, [number]>(
+      "SELECT curtidas, salvos FROM interacoes WHERE post_id = ?",
+    )
+    .get(post.id) ?? undefined;
 }

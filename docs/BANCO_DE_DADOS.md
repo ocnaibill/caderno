@@ -53,6 +53,16 @@ Indexa `titulo`, `resumo` e corpo extraído do markdown. Repopulada a cada reind
 
 ## Dados de runtime (não derivados de arquivo)
 
+### `interacoes`
+
+Contador de curtir (Folha) e salvar (Arquivo). Sem conta de leitor — quem já curtiu/salvou fica registrado no `localStorage` do navegador do leitor, que decide se o próximo clique manda `+1` ou `-1`. Tabela separada de `posts` (que é derivada/reconstruível) pra não perder os números só por rodar reindex.
+
+| Coluna | Tipo | Notas |
+|---|---|---|
+| `post_id` | INTEGER PK, FK → `posts.id` | |
+| `curtidas` | INTEGER | Default `0`, nunca negativo |
+| `salvos` | INTEGER | Default `0`, nunca negativo — exibido em "Edições Marcantes" no Arquivo |
+
 ### `comentarios`
 
 | Coluna | Tipo | Notas |
@@ -96,6 +106,7 @@ posts ──┬── post_tags ── tags
         ├── comentarios
         ├── envios
         ├── pensamentos (post_id opcional)
+        ├── interacoes (1:1)
         └── posts_fts (espelha posts)
 
 assinantes (independente — não referencia posts)

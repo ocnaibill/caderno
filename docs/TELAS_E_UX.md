@@ -27,7 +27,7 @@ A tela principal — onde se lê uma folha publicada.
 - Filtros por categoria (abas) + busca por termo.
 - Listagem agrupada por **ano → mês**, cada grupo com contagem de publicações; cada item mostra número, data, categoria (tag), tempo de leitura, título, excerpt (`resumo`) e link "Ler caderno completo".
 - Anos anteriores colapsam num bloco de "Tomo" (ex. "Cadernos de 2023 → Acessar Tomo 2023").
-- Sidebar direita: "Edições Favoritas" (destaques manuais do autor), um encarte com imagem/quote, e "Índice Temático" (tags com contagem).
+- Sidebar direita: "Edições Marcantes" (destaques manuais do autor via `destaque: true`, com contagem real de "leituras salvas" — ver [ARQUITETURA.md](ARQUITETURA.md#curtir-e-salvar-primeiro-exemplo-real-de-interatividade-pontual)) e "Índice Temático" (tags com contagem, link filtra o Arquivo).
 
 ## 3. Assinar Newsletter
 

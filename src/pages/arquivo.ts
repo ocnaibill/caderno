@@ -56,7 +56,7 @@ function renderizarItem(item: ArquivoItem): string {
     ${item.resumo ? `<p class="arquivo-item__resumo body-sm">${escapeHtml(item.resumo)}</p>` : ""}
     <div class="arquivo-item__rodape">
       <a class="arquivo-item__link" href="/folha/${item.slug}">Ler caderno completo →</a>
-      <button type="button" class="arquivo-item__salvar" aria-label="Salvar"><span class="material-symbols-outlined">bookmark</span></button>
+      <button type="button" class="arquivo-item__salvar" data-acao="salvar" data-slug="${item.slug}" aria-label="Salvar"><span class="material-symbols-outlined">bookmark</span></button>
     </div>
   </article>`;
 }
@@ -130,12 +130,15 @@ export function renderizarPaginaArquivo(url: URL): Response {
   const tags = buscarTagsComContagem();
   const htmlIndiceTematico = tags.length
     ? `<section class="arquivo-indice-tematico">
-        <h2 class="label-md">Índice Temático</h2>
+        <div class="arquivo-indice-tematico__cabecalho">
+          <h2 class="headline-sm">Índice Temático</h2>
+          <span class="label-sm">Taxonomia</span>
+        </div>
         <ul>
           ${tags
             .map(
               (t) =>
-                `<li><a href="${construirLink({ tag: t.nome })}">${escapeHtml(t.nome)}</a><span class="label-sm">${t.total}</span></li>`,
+                `<li><a href="${construirLink({ tag: t.nome })}"><span>${escapeHtml(t.nome)}</span><span class="arquivo-indice-tematico__contagem">${String(t.total).padStart(2, "0")}</span></a></li>`,
             )
             .join("\n")}
         </ul>
@@ -145,12 +148,23 @@ export function renderizarPaginaArquivo(url: URL): Response {
   const destaques = buscarDestaques();
   const htmlDestaques = destaques.length
     ? `<section class="arquivo-destaques">
-        <h2 class="label-md">Edições Favoritas</h2>
+        <div class="arquivo-destaques__cabecalho">
+          <span class="material-symbols-outlined">auto_stories</span>
+          <h2 class="headline-sm">Edições Marcantes</h2>
+        </div>
+        <p class="body-sm">Uma mistura das que eu mais nerdei, gostei de escrever, me dediquei mais ao que estavam nelas e que vocês mais gostaram.</p>
         <ul>
           ${destaques
             .map(
-              (d) =>
-                `<li><span class="label-sm">Caderno Nº ${d.numero}</span><a href="/folha/${d.slug}">${escapeHtml(d.titulo)}</a></li>`,
+              (d) => `<li>
+                <a href="/folha/${d.slug}">
+                  <div class="arquivo-destaques__meta label-sm">
+                    <span>CADERNO Nº ${String(d.numero).padStart(2, "0")}</span>
+                    <span>${d.salvos} ${d.salvos === 1 ? "leitura salva" : "leituras salvas"}</span>
+                  </div>
+                  <h3 class="arquivo-destaques__titulo">${escapeHtml(d.titulo)}</h3>
+                </a>
+              </li>`,
             )
             .join("\n")}
         </ul>
