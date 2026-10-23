@@ -2,6 +2,9 @@
 // (não é por folha, nem por pensamento) — fica centralizado aqui por enquanto.
 export const site = {
   nome: "O Caderno.",
+  // Assumi o domínio do seu homelab (ocnaibill.dev) como placeholder — troque
+  // aqui quando tiver o domínio final do Caderno definido.
+  url: "https://ocnaibill.dev",
   autor: {
     nome: "Bianco Da Costa Oliveira",
     handle: "@ocnaibill",

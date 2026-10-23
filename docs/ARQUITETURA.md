@@ -26,6 +26,14 @@ O próprio `DESIGN.md` rejeita explicitamente "high-frequency motion" e clutter 
 
 Isso não é à prova de spam (alguém pode limpar o `localStorage` e clicar de novo), mas pra um contador de "quanto as pessoas gostaram" num blog pessoal sem conta, é proporcional ao problema.
 
+### Compartilhar e baixar
+
+`src/public/acoes.js`: compartilhar usa a Web Share API nativa quando existe (mobile, a maioria dos browsers recentes); sem ela, cai pra copiar o link no clipboard com um aviso visual. Baixar abre um menuzinho com duas opções — `.md` é download de verdade do arquivo fonte (`GET /folha/:slug/baixar.md`, com `Content-Disposition: attachment`); "PDF" só aciona `window.print()`, reaproveitando o `@media print` que já existia — sem precisar de uma lib de geração de PDF no servidor só pra isso.
+
+### SEO básico
+
+`src/pages/seo.ts` gera `robots.txt`, `sitemap.xml` e `rss.xml` direto do índice de `posts` publicados — nada hardcoded além das páginas estáticas (`/`, `/arquivo`, `/assinar`, `/eu`). `site.url` em `src/config.ts` é usado pra montar URLs absolutas (canonical, og:url, links do RSS) — hoje assume o domínio do homelab (`ocnaibill.dev`) como placeholder até ter o domínio final do Caderno.
+
 ## Modelo de conteúdo: "misto"
 
 O Markdown é a **fonte da verdade**. O SQLite é só um **índice derivado**, reconstruível a qualquer momento a partir dos arquivos — nunca o contrário. Apagar o banco e reindexar do zero sempre tem que funcionar.

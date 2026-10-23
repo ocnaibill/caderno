@@ -9,6 +9,9 @@ interface LayoutOpts {
   corpo: string;
   ativo?: PaginaAtiva;
   scripts?: string[];
+  /** Caminho da página (ex. "/folha/042-slug"), pra montar a URL canônica/og:url. */
+  caminho?: string;
+  tipoOg?: "website" | "article";
 }
 
 function linkNav(href: string, label: string, ativo: boolean): string {
@@ -34,14 +37,32 @@ function formatarDataHoraAtual(): string {
   return `${data} — ${hora.replace(":", "h")} BRT`;
 }
 
-export function layout({ titulo, descricao, corpo, ativo, scripts = [] }: LayoutOpts): string {
+export function layout({
+  titulo,
+  descricao,
+  corpo,
+  ativo,
+  scripts = [],
+  caminho,
+  tipoOg = "website",
+}: LayoutOpts): string {
+  const tituloCompleto = `${titulo} — ${site.nome}`;
+  const url = caminho ? `${site.url}${caminho}` : undefined;
+
   return `<!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>${escapeHtml(titulo)} — ${site.nome}</title>
+  <title>${escapeHtml(tituloCompleto)}</title>
   ${descricao ? `<meta name="description" content="${escapeHtml(descricao)}" />` : ""}
+  ${url ? `<link rel="canonical" href="${escapeHtml(url)}" />` : ""}
+  <meta property="og:site_name" content="${escapeHtml(site.nome)}" />
+  <meta property="og:type" content="${tipoOg}" />
+  <meta property="og:title" content="${escapeHtml(tituloCompleto)}" />
+  ${descricao ? `<meta property="og:description" content="${escapeHtml(descricao)}" />` : ""}
+  ${url ? `<meta property="og:url" content="${escapeHtml(url)}" />` : ""}
+  <meta name="twitter:card" content="summary" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -87,6 +108,7 @@ ${corpo}
     </div>
   </footer>
   <script src="/public/interacoes.js" defer></script>
+  <script src="/public/acoes.js" defer></script>
   ${scripts.map((src) => `<script src="${src}" defer></script>`).join("\n")}
 </body>
 </html>`;

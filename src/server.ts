@@ -3,7 +3,9 @@ import { buscarUltimaFolhaPublicada } from "./content/repo.ts";
 import { responderInteracao } from "./pages/api.ts";
 import { renderizarPaginaArquivo } from "./pages/arquivo.ts";
 import { renderizarPaginaAssinar, responderAssinatura, responderCancelamento } from "./pages/assinar.ts";
-import { renderizarPaginaFolha } from "./pages/folha.ts";
+import { renderizarPaginaEu } from "./pages/eu.ts";
+import { renderizarPaginaFolha, responderBaixarMarkdown } from "./pages/folha.ts";
+import { responderRobots, responderRss, responderSitemap } from "./pages/seo.ts";
 
 getDb(); // garante que o banco/schema existem antes de servir qualquer rota
 
@@ -20,6 +22,7 @@ const server = Bun.serve({
       return Response.redirect(`/folha/${ultima.slug}`, 302);
     },
     "/folha/:slug": (req) => renderizarPaginaFolha(req.params.slug),
+    "/folha/:slug/baixar.md": (req) => responderBaixarMarkdown(req.params.slug),
     "/folha/:slug/interacao": {
       POST: (req) => responderInteracao(req, req.params.slug),
     },
@@ -29,6 +32,10 @@ const server = Bun.serve({
       POST: (req) => responderAssinatura(req),
     },
     "/assinar/cancelar": (req) => responderCancelamento(new URL(req.url)),
+    "/eu": () => renderizarPaginaEu(),
+    "/robots.txt": () => responderRobots(),
+    "/sitemap.xml": () => responderSitemap(),
+    "/rss.xml": () => responderRss(),
     "/public/estilo.css": new Response(Bun.file("src/public/estilo.css"), {
       headers: { "Content-Type": "text/css; charset=utf-8" },
     }),
@@ -36,6 +43,9 @@ const server = Bun.serve({
       headers: { "Content-Type": "text/javascript; charset=utf-8" },
     }),
     "/public/formato-preview.js": new Response(Bun.file("src/public/formato-preview.js"), {
+      headers: { "Content-Type": "text/javascript; charset=utf-8" },
+    }),
+    "/public/acoes.js": new Response(Bun.file("src/public/acoes.js"), {
       headers: { "Content-Type": "text/javascript; charset=utf-8" },
     }),
   },

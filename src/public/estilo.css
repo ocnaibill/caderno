@@ -472,6 +472,64 @@ button.acao--ativa .material-symbols-outlined {
   font-variation-settings: "FILL" 1;
 }
 
+/* Tooltip "Link copiado!" (compartilhar, quando não há Web Share API) */
+.autoria__acoes button {
+  position: relative;
+}
+.acao--copiado::after {
+  content: "Link copiado!";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: var(--espaco-xs);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-family: var(--fonte-mono);
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: var(--raio);
+  white-space: nowrap;
+}
+
+/* Menu de baixar (.md / PDF) */
+.acao-menu {
+  position: relative;
+}
+.acao-menu__lista {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: var(--espaco-xs);
+  background: var(--color-surface-container-low);
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-seca);
+  padding: var(--espaco-xs);
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  z-index: 10;
+}
+.acao-menu__lista a,
+.acao-menu__lista button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  text-decoration: none;
+  color: var(--color-on-surface);
+  font-family: var(--fonte-mono);
+  font-size: 13px;
+  padding: var(--espaco-xs) var(--espaco-sm);
+  border-radius: var(--raio);
+  cursor: pointer;
+}
+.acao-menu__lista a:hover,
+.acao-menu__lista button:hover {
+  background: var(--color-surface-container-high);
+}
+
 /* Corpo da folha (markdown renderizado) */
 .prose {
   text-align: justify;
@@ -1025,6 +1083,14 @@ button.acao--ativa .material-symbols-outlined {
   padding: 1px 6px;
 }
 
+/* Página estática (ex.: Eu) */
+.pagina {
+  padding: var(--espaco-lg) var(--margem) var(--espaco-xl);
+}
+.pagina__leitura {
+  max-width: var(--medida-leitura);
+}
+
 /* Assinar */
 .assinar {
   padding: var(--espaco-lg) var(--margem) var(--espaco-xl);
@@ -1303,6 +1369,12 @@ button.acao--ativa .material-symbols-outlined {
     margin-left: 0;
     flex-direction: row;
     text-align: left;
+  }
+  /* .autoria vira coluna nesse breakpoint, então o menu de baixar pode ficar
+     perto da borda esquerda — ancora pela esquerda pra nunca estourar a tela. */
+  .acao-menu__lista {
+    right: auto;
+    left: 0;
   }
 }
 

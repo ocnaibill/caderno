@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { iniciais, site } from "../config.ts";
 import { buscarAdjacentes, buscarFolhaPorSlug, buscarPensamentosDaFolha } from "../content/repo.ts";
 import { formatarCategoria } from "../render/categoria.ts";
@@ -176,8 +177,14 @@ export function renderizarPaginaFolha(slug: string): Response {
           </div>
           <div class="autoria__acoes">
             <button type="button" data-acao="curtir" data-slug="${folha.slug}" aria-label="Curtir"><span class="material-symbols-outlined">favorite</span></button>
-            <button type="button" data-acao="compartilhar" aria-label="Compartilhar"><span class="material-symbols-outlined">ios_share</span></button>
-            <button type="button" data-acao="baixar" aria-label="Baixar"><span class="material-symbols-outlined">download</span></button>
+            <button type="button" data-acao="compartilhar" data-url="${escapeHtml(`${site.url}/folha/${folha.slug}`)}" data-titulo="${escapeHtml(frontmatter.titulo)}" aria-label="Compartilhar"><span class="material-symbols-outlined">ios_share</span></button>
+            <div class="acao-menu">
+              <button type="button" class="acao-menu__btn" data-menu="baixar" aria-label="Baixar" aria-haspopup="true" aria-expanded="false"><span class="material-symbols-outlined">download</span></button>
+              <div class="acao-menu__lista" hidden>
+                <a href="/folha/${folha.slug}/baixar.md" download>Baixar .md</a>
+                <button type="button" data-acao="imprimir-pdf">Salvar como PDF</button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -198,9 +205,28 @@ export function renderizarPaginaFolha(slug: string): Response {
     descricao: frontmatter.resumo,
     corpo: corpoPagina,
     ativo: "folha",
+    caminho: `/folha/${folha.slug}`,
+    tipoOg: "article",
   });
 
   return new Response(paginaHtml, {
     headers: { "Content-Type": "text/html; charset=utf-8" },
+  });
+}
+
+export function responderBaixarMarkdown(slug: string): Response {
+  const resultado = buscarFolhaPorSlug(slug);
+  if (!resultado) {
+    return new Response("Folha não encontrada.", { status: 404 });
+  }
+
+  const { folha } = resultado;
+  const bruto = readFileSync(folha.caminhoArquivo, "utf-8");
+
+  return new Response(bruto, {
+    headers: {
+      "Content-Type": "text/markdown; charset=utf-8",
+      "Content-Disposition": `attachment; filename="${folha.slug}.md"`,
+    },
   });
 }

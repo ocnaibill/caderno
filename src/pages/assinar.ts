@@ -129,6 +129,7 @@ export function renderizarPaginaAssinar(url: URL): Response {
     corpo: corpoPagina,
     ativo: "assinar",
     scripts: ["/public/formato-preview.js"],
+    caminho: "/assinar",
   });
 
   return new Response(paginaHtml, {

@@ -211,6 +211,7 @@ export function renderizarPaginaArquivo(url: URL): Response {
     descricao: "Todas as folhas publicadas d'O Caderno.",
     corpo: corpoPagina,
     ativo: "arquivo",
+    caminho: "/arquivo",
   });
 
   return new Response(paginaHtml, {
