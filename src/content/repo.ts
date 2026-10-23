@@ -233,3 +233,63 @@ export function ajustarInteracao(slug: string, tipo: TipoInteracao, delta: 1 | -
     )
     .get(post.id) ?? undefined;
 }
+
+/** Últimas N folhas publicadas, pra listas rápidas (ex. "Arquivo Recente" na tela Assinar). */
+export function buscarRecentes(limite = 3): ArquivoItem[] {
+  const db = getDb();
+  return db
+    .query<ArquivoItem, [number]>(
+      `SELECT numero, slug, titulo, resumo, categoria, data_publicacao, caminho_arquivo
+       FROM posts
+       WHERE rascunho = 0
+       ORDER BY data_publicacao DESC, numero DESC
+       LIMIT ?`,
+    )
+    .all(limite);
+}
+
+export type FormatoEmail = "texto_puro" | "editorial";
+export type StatusAssinante = "pendente_confirmacao" | "ativo" | "cancelado";
+
+export interface ResultadoAssinatura {
+  status: "nova" | "ja_existia";
+  statusAssinante: StatusAssinante;
+}
+
+/**
+ * Cria um assinante novo com status `ativo` direto — double opt-in (RN-12)
+ * fica pendente de ter um provedor de e-mail configurado (Resend/Postmark)
+ * pra realmente mandar o e-mail de confirmação; por ora seria um link que
+ * não vai pra lugar nenhum. Ver docs/REGRAS_DE_NEGOCIO.md.
+ */
+export function criarAssinante(email: string, formato: FormatoEmail): ResultadoAssinatura {
+  const db = getDb();
+  const existente = db
+    .query<{ status: StatusAssinante }, [string]>("SELECT status FROM assinantes WHERE email = ?")
+    .get(email);
+
+  if (existente) {
+    if (existente.status === "cancelado") {
+      db.query(
+        "UPDATE assinantes SET status = 'ativo', formato_preferido = ?, cancelado_em = NULL WHERE email = ?",
+      ).run(formato, email);
+      return { status: "nova", statusAssinante: "ativo" };
+    }
+    return { status: "ja_existia", statusAssinante: existente.status };
+  }
+
+  const token = crypto.randomUUID();
+  db.query(
+    `INSERT INTO assinantes (email, formato_preferido, status, token_gerenciamento)
+     VALUES (?, ?, 'ativo', ?)`,
+  ).run(email, formato, token);
+
+  return { status: "nova", statusAssinante: "ativo" };
+}
+
+/** RF-19/RN-07: cancelamento self-service, sem login, só com o token do e-mail. */
+export function cancelarAssinante(token: string): boolean {
+  const db = getDb();
+  const linha = db.query("UPDATE assinantes SET status = 'cancelado', cancelado_em = datetime('now') WHERE token_gerenciamento = ? AND status != 'cancelado'").run(token);
+  return linha.changes > 0;
+}

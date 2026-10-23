@@ -31,10 +31,9 @@ A tela principal — onde se lê uma folha publicada.
 
 ## 3. Assinar Newsletter
 
-- Sidebar esquerda: "Compromisso Editorial" (texto sobre a falta de compromisso de frequência), "Sem Algoritmo" (sem publicidade/patrocínio), "Arquivo Recente" (3 links rápidos).
+- Sidebar esquerda: "Compromisso Editorial" (texto sobre a falta de compromisso de frequência), "Sem Algoritmo" (sem publicidade/patrocínio), "Arquivo Recente" (3 links rápidos, dados reais).
 - Card central: escolha de **formato de e-mail** (Texto Puro vs Edição Editorial) + campo de e-mail + botão de assinatura + aviso "100% gratuito, cancele com um clique".
-- **"Amostra da Caixa de Entrada"**: preview fiel de como o e-mail chega, alternando conforme o formato escolhido — isso implica que o motor de geração de e-mail precisa estar pronto para os dois formatos desde o início (ver [ARQUITETURA.md](ARQUITETURA.md)).
-- Depoimentos de assinantes (grade 2x2).
-- FAQ curto + link para Política de Privacidade.
+- **"Amostra da Caixa de Entrada"**: preview fiel de como o e-mail chega, alternando sem reload conforme o formato escolhido — reusa a folha publicada mais recente de verdade (`src/email/render.ts`), nada de lorem ipsum.
+- FAQ curto + link para Política de Privacidade — ainda não implementado.
 
-> Estatísticas de "leitores", "países" e "leituras salvas" aparecem no design (Arquivo e Assinar), mas foram marcadas pelo Bianco como **puramente decorativas nesta fase** — não vão virar requisito de analytics agora. Ver [REGRAS_DE_NEGOCIO.md](REGRAS_DE_NEGOCIO.md#rn-sobre-métricas).
+> Estatísticas de "leitores" e "países" aparecem no design (Arquivo e Assinar), mas foram marcadas pelo Bianco como **puramente decorativas nesta fase** — não viram requisito de analytics agora. Ver [REGRAS_DE_NEGOCIO.md](REGRAS_DE_NEGOCIO.md#rn-sobre-métricas). Os depoimentos de assinantes ("Comentários de quem já recebe") também ficaram de fora por enquanto — eram pessoas inventadas no protótipo, e o Bianco preferiu não fabricar depoimentos falsos; a seção volta quando houver depoimentos reais.

@@ -21,8 +21,8 @@ Numeração `RN-nn`, decisões não se reabrem sem necessidade real de mudar. Re
 - **RN-07**: Cancelamento é self-service: link no rodapé do e-mail, ou respondendo "pausa" ao e-mail (como o próprio mockup da caixa de entrada sugere) — sem precisar de login.
 - **RN-10**: O RSS contém só folhas publicadas (`rascunho: false`), ordenadas por `data_publicacao` decrescente.
 - **RN-11** **(em aberto)**: O disparo do e-mail de uma nova edição é automático ao publicar, ou uma ação manual separada? Dado que o compromisso editorial do design é "frequência nada estrita, sei lá quando sai o próximo", eu sugiro **disparo manual** (uma ação explícita depois de revisar a folha publicada) para evitar envio acidental de rascunho ainda em polimento.
-- **RN-12** **(proposta)**: Novo assinante passa por confirmação de e-mail (double opt-in) antes de `status` virar `ativo` — reduz reclamação de spam e é boa prática exigida por provedores como Resend/Postmark.
+- **RN-12** **(simplificação temporária)**: Hoje `criarAssinante` já coloca `status = 'ativo'` direto, sem double opt-in — não tem provedor de e-mail configurado ainda pra mandar o link de confirmação. Quando o Resend/Postmark entrar, troca pra `pendente_confirmacao` + e-mail de confirmação, como a proposta original previa.
 
 ## Métricas (RN sobre métricas)
 
-- **RN-13**: Números de leitores, países e "leituras salvas" exibidos no design são **decorativos nesta fase** — não exigem rastreamento real nem dashboard de analytics. Ficam ocultos/com placeholder neutro até (se algum dia) virar requisito de verdade.
+- **RN-13**: Números de leitores e países exibidos no design são **decorativos nesta fase** — não exigem rastreamento real nem dashboard de analytics, ficam ocultos até (se algum dia) virar requisito de verdade. **Atualizado 22/10**: "leituras salvas" saiu dessa lista — virou contador real (tabela `interacoes`), já que o Bianco decidiu que valia a pena dado que o botão de curtir/salvar já existia no design sem função.

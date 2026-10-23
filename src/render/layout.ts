@@ -8,6 +8,7 @@ interface LayoutOpts {
   descricao?: string;
   corpo: string;
   ativo?: PaginaAtiva;
+  scripts?: string[];
 }
 
 function linkNav(href: string, label: string, ativo: boolean): string {
@@ -33,7 +34,7 @@ function formatarDataHoraAtual(): string {
   return `${data} — ${hora.replace(":", "h")} BRT`;
 }
 
-export function layout({ titulo, descricao, corpo, ativo }: LayoutOpts): string {
+export function layout({ titulo, descricao, corpo, ativo, scripts = [] }: LayoutOpts): string {
   return `<!doctype html>
 <html lang="pt-BR">
 <head>
@@ -86,6 +87,7 @@ ${corpo}
     </div>
   </footer>
   <script src="/public/interacoes.js" defer></script>
+  ${scripts.map((src) => `<script src="${src}" defer></script>`).join("\n")}
 </body>
 </html>`;
 }

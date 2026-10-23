@@ -2,6 +2,7 @@ import { getDb } from "./db/client.ts";
 import { buscarUltimaFolhaPublicada } from "./content/repo.ts";
 import { responderInteracao } from "./pages/api.ts";
 import { renderizarPaginaArquivo } from "./pages/arquivo.ts";
+import { renderizarPaginaAssinar, responderAssinatura, responderCancelamento } from "./pages/assinar.ts";
 import { renderizarPaginaFolha } from "./pages/folha.ts";
 
 getDb(); // garante que o banco/schema existem antes de servir qualquer rota
@@ -23,10 +24,18 @@ const server = Bun.serve({
       POST: (req) => responderInteracao(req, req.params.slug),
     },
     "/arquivo": (req) => renderizarPaginaArquivo(new URL(req.url)),
+    "/assinar": {
+      GET: (req) => renderizarPaginaAssinar(new URL(req.url)),
+      POST: (req) => responderAssinatura(req),
+    },
+    "/assinar/cancelar": (req) => responderCancelamento(new URL(req.url)),
     "/public/estilo.css": new Response(Bun.file("src/public/estilo.css"), {
       headers: { "Content-Type": "text/css; charset=utf-8" },
     }),
     "/public/interacoes.js": new Response(Bun.file("src/public/interacoes.js"), {
+      headers: { "Content-Type": "text/javascript; charset=utf-8" },
+    }),
+    "/public/formato-preview.js": new Response(Bun.file("src/public/formato-preview.js"), {
       headers: { "Content-Type": "text/javascript; charset=utf-8" },
     }),
   },

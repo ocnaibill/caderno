@@ -31,10 +31,10 @@ Ver [TELAS_E_UX.md](TELAS_E_UX.md) para o mapeamento de cada tela e [REGRAS_DE_N
 - **RF-15**: Comentário só aparece publicamente após aprovação manual (RN-05).
 
 ### Assinatura e e-mail
-- **RF-16**: Permitir inscrição por e-mail, com escolha de formato (Texto Puro / Edição Editorial).
-- **RF-17**: Enviar e-mail de confirmação de inscrição (double opt-in, RN-12).
-- **RF-18**: Gerar, para cada edição, as duas versões de e-mail (texto puro e HTML editorial) a partir do mesmo markdown fonte.
-- **RF-19**: Permitir que o assinante cancele a inscrição ou troque de formato sem login, via link único.
+- **RF-16**: Permitir inscrição por e-mail, com escolha de formato (Texto Puro / Edição Editorial). ✅ `POST /assinar`.
+- **RF-17**: Enviar e-mail de confirmação de inscrição (double opt-in, RN-12). ⏸ Pendente de provedor de e-mail configurado — ver RN-12.
+- **RF-18**: Gerar, para cada edição, as duas versões de e-mail (texto puro e HTML editorial) a partir do mesmo markdown fonte. 🔶 A função de render existe (`src/email/render.ts`, usada na amostra da tela Assinar); falta o template final pronto pra envio de verdade.
+- **RF-19**: Permitir que o assinante cancele a inscrição ou troque de formato sem login, via link único. 🔶 Cancelar está pronto (`GET /assinar/cancelar?token=`); trocar formato ainda não tem rota.
 - **RF-20**: Registrar histórico de envios por edição (tabela `envios`), para auditoria própria.
 
 ### RSS e integração

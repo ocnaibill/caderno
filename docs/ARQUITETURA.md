@@ -143,6 +143,8 @@ A partir do **mesmo markdown fonte**, geramos duas versões por edição:
 - **Texto Puro**: plain text, formatado para leitores de e-mail simples / e-ink (ver mockup "Amostra da Caixa de Entrada" na tela Assinar).
 - **Edição Editorial**: HTML usando os tokens do `DESIGN.md` (Newsreader, notas marginais, sépia).
 
+`src/email/render.ts` já tem as duas funções de render (`renderizarAmostraTextoPuro`/`renderizarAmostraEditorial`), usadas hoje só pra preview na tela Assinar — a amostra sempre reflete a folha publicada mais recente de verdade, nunca conteúdo inventado. Falta o template final pra disparo de verdade (RF-18/RF-20), que depende do provedor de e-mail configurado.
+
 ### O que é banco "de verdade" (não derivado de markdown)
 
 `comentários`, `assinantes` e `envios` são dados gerados em runtime por terceiros (leitores) — não são conteúdo autoral, então vivem só no SQLite, sem contrapartida em arquivo.
