@@ -885,26 +885,61 @@ button.acao--ativa .material-symbols-outlined {
 
 /* Rodapé do site */
 .rodape-site {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--espaco-xl);
   background: var(--color-surface-container-low);
   border-top: 1px solid var(--color-surface-container-high);
   padding: var(--espaco-xl) var(--margem);
   font-size: 15px;
 }
+.rodape-site__interno {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.rodape-site__grade {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--espaco-xl);
+}
 @media (min-width: 900px) {
-  .rodape-site {
+  .rodape-site__grade {
     grid-template-columns: repeat(3, 1fr);
   }
 }
-.rodape-site h3,
+.rodape-site h3 {
+  font-family: var(--fonte-serif);
+  font-size: 22px;
+  color: var(--color-on-surface);
+  margin-bottom: var(--espaco-xs);
+}
 .rodape-site h4 {
   font-family: var(--fonte-mono);
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--color-secondary);
+  margin-bottom: var(--espaco-xs);
+}
+.rodape-site__descricao {
+  color: var(--color-on-surface-variant);
+}
+.rodape-site__divisor {
+  margin-top: var(--espaco-xl);
+  border-top: 1px solid var(--color-surface-container-high);
+}
+.rodape-site__assinatura {
+  padding-top: var(--espaco-md);
+}
+.rodape-site__perfil {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espaco-xs);
+  font-family: var(--fonte-mono);
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--color-secondary);
+  text-decoration: none;
+}
+.rodape-site__perfil img {
+  display: block;
 }
 .rodape-site ul {
   list-style: none;

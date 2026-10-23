@@ -18,6 +18,7 @@ import {
 import { responderDisparo } from "./pages/disparo.ts";
 import { renderizarPaginaEditor, responderPreview, responderPublicar } from "./pages/editor.ts";
 import { renderizarPaginaEu } from "./pages/eu.ts";
+import { renderizarPaginaPrivacidade } from "./pages/privacidade.ts";
 import { renderizarPaginaFolha, responderBaixarMarkdown } from "./pages/folha.ts";
 import { responderRobots, responderRss, responderSitemap } from "./pages/seo.ts";
 
@@ -66,6 +67,7 @@ const server = Bun.serve({
       POST: (req) => responderGerenciar(req),
     },
     "/eu": () => renderizarPaginaEu(),
+    "/privacidade": () => renderizarPaginaPrivacidade(),
     "/escrever": {
       GET: (req) => verificarAutenticacaoAdmin(req) ?? renderizarPaginaEditor(),
       POST: (req) => verificarAutenticacaoAdmin(req) ?? responderPublicar(req),
@@ -94,6 +96,9 @@ const server = Bun.serve({
     }),
     "/public/editor.js": new Response(Bun.file("src/public/editor.js"), {
       headers: { "Content-Type": "text/javascript; charset=utf-8" },
+    }),
+    "/public/github.svg": new Response(Bun.file("src/public/github.svg"), {
+      headers: { "Content-Type": "image/svg+xml; charset=utf-8" },
     }),
   },
   fetch() {

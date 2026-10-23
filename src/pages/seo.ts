@@ -10,7 +10,7 @@ export function responderRobots(): Response {
   return new Response(corpo, { headers: { "Content-Type": "text/plain; charset=utf-8" } });
 }
 
-const PAGINAS_ESTATICAS = ["/", "/arquivo", "/assinar", "/eu"];
+const PAGINAS_ESTATICAS = ["/", "/arquivo", "/assinar", "/eu", "/privacidade"];
 
 export function responderSitemap(): Response {
   const itens = buscarFolhasPublicadas();

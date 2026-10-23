@@ -86,25 +86,36 @@ export function layout({
 ${corpo}
   </main>
   <footer class="rodape-site">
-    <div class="rodape-site__coluna">
-      <h3>${site.nome}</h3>
-      <p>Parte do meu laboratório que acabei tomando na intenção de escrever sobre cada loucura que acaba passando pela minha mente.</p>
-    </div>
-    <div class="rodape-site__coluna">
-      <h4>Dias de um futuro passado</h4>
-      <p>Receba atualizações quando a próxima folha tiver sido escrita.</p>
-      <form class="form-assinatura" method="post" action="/assinar">
-        <input type="email" name="email" placeholder="seu@email.com" required />
-        <button type="submit">Assinar</button>
-      </form>
-    </div>
-    <div class="rodape-site__coluna">
-      <h4>Colofão &amp; Navegação</h4>
-      <ul>
-        <li><a href="/rss.xml">Distribuição via RSS</a></li>
-        <li><a href="/eu">Meus outros trabalhos</a></li>
-        <li><a href="#">Acessibilidade &amp; Contraste</a></li>
-      </ul>
+    <div class="rodape-site__interno">
+      <div class="rodape-site__grade">
+        <div class="rodape-site__coluna">
+          <h3>${site.nome}</h3>
+          <p class="rodape-site__descricao">Parte do meu laboratório que acabei tomando na intenção de escrever sobre cada loucura que acaba passando pela minha mente.<br />El. Psy. Kongroo.</p>
+        </div>
+        <div class="rodape-site__coluna">
+          <h4>Dias de um futuro passado</h4>
+          <p>Receba atualizações quando a próxima folha tiver sido escrita, desculpe, isso pode demorar muito mesmo.</p>
+          <form class="form-assinatura" method="post" action="/assinar">
+            <input type="email" name="email" placeholder="seu@email.com" required />
+            <button type="submit">Assinar</button>
+          </form>
+        </div>
+        <div class="rodape-site__coluna">
+          <h4>Colofão &amp; Navegação</h4>
+          <ul>
+            <li><a href="/rss.xml">Distribuição via RSS</a></li>
+            <li><a href="/eu">Meus outros trabalhos</a></li>
+            <li><a href="/privacidade">Política de Privacidade</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="rodape-site__divisor"></div>
+      <div class="rodape-site__assinatura">
+        <a class="rodape-site__perfil" href="https://github.com/ocnaibill" target="_blank" rel="noopener noreferrer">
+          <span>@ocnaibill</span>
+          <img src="/public/github.svg" width="15" height="15" alt="GitHub" />
+        </a>
+      </div>
     </div>
   </footer>
   <script src="/public/interacoes.js" defer></script>
