@@ -675,6 +675,26 @@ button.acao--ativa .material-symbols-outlined {
   margin-left: auto;
   margin-right: auto;
 }
+/* Separador de seção — substitui o <hr> padrão do markdown (ver
+   renderizarCorpo em markdown.ts). Medidas literais do frame "Typographic
+   Section Break" no Figma. */
+.separador-secao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem 0;
+}
+.separador-secao__linha {
+  width: 32px;
+  height: 1px;
+  flex-shrink: 0;
+  background: var(--color-outline-variant);
+}
+.separador-secao__icone {
+  flex-shrink: 0;
+  color: var(--color-secondary);
+}
 .prose figure img {
   border-radius: 0;
 }

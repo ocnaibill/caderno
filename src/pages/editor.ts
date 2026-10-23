@@ -82,6 +82,7 @@ export function renderizarPaginaEditor(): Response {
             <button type="button" data-bloco="nota-italico">+ Nota (itálico)</button>
             <button type="button" data-bloco="lista">+ Lista com título</button>
             <button type="button" data-bloco="imagem">+ Imagem com legenda</button>
+            <button type="button" data-bloco="separador">+ Separador</button>
           </div>
           <textarea id="campo-corpo" class="editor__textarea-corpo" rows="20" placeholder="## Primeira seção
 

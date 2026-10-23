@@ -125,6 +125,12 @@ const server = Bun.serve({
         "Cache-Control": "public, max-age=31536000, immutable",
       },
     }),
+    "/public/favicon.svg": new Response(Bun.file("src/public/favicon.svg"), {
+      headers: {
+        "Content-Type": "image/svg+xml; charset=utf-8",
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
+    }),
   },
   fetch() {
     return new Response("Não encontrado", { status: 404 });

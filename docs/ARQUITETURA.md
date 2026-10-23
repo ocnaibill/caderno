@@ -45,6 +45,12 @@ Como `.folha__leitura`/`.folha__sidebar` só existem depois que o HTML deles é 
 
 `src/pages/seo.ts` gera `robots.txt`, `sitemap.xml` e `rss.xml` direto do índice de `posts` publicados — nada hardcoded além das páginas estáticas (`/`, `/arquivo`, `/assinar`, `/eu`). `site.url` em `src/config.ts` é usado pra montar URLs absolutas (canonical, og:url, links do RSS) — hoje assume o domínio do homelab (`ocnaibill.dev`) como placeholder até ter o domínio final do Caderno.
 
+### Assets estáticos e favicon
+
+Todo `/public/*` (CSS, JS, SVGs) é referenciado com `?v=<hash>` — `src/render/layout.ts` calcula um hash do conteúdo real dos arquivos uma vez por processo (`ASSET_VERSION`) e anexa em cada link/script via o helper `asset()`. Isso existe porque um deploy que só troca o CSS não troca a URL — sem isso, CDN na frente do túnel (Cloudflare) pode continuar servindo a versão em cache por horas mesmo com o servidor já atualizado (bug real que já aconteceu). Como a URL muda sozinha quando o conteúdo muda, os assets são servidos com `Cache-Control: immutable`.
+
+`src/public/favicon.svg` troca de cor sozinho com o tema do navegador — tem um `<style>` com `@media (prefers-color-scheme: dark)` embutido no próprio SVG (sem precisar de JS nem de dois arquivos .ico separados).
+
 ## Modelo de conteúdo: "misto"
 
 O Markdown é a **fonte da verdade**. O SQLite é só um **índice derivado**, reconstruível a qualquer momento a partir dos arquivos — nunca o contrário. Apagar o banco e reindexar do zero sempre tem que funcionar.
@@ -127,6 +133,7 @@ Além do markdown padrão, o corpo de uma folha aceita:
      Corpo do item, pode ter mais de uma frase.
   ```
   Precisa da linha em branco entre título e corpo pra virarem parágrafos separados — sem ela, o markdown funde tudo numa linha só.
+- **Separador de seção**: `---` (linha horizontal padrão do markdown) — em vez de um `<hr>` genérico, vira o ornamento linha—ícone do caderno—linha (medidas literais do frame "Typographic Section Break" no Figma). Reaproveita a sintaxe que o leitor já conhece em vez de inventar uma nova.
 
 ### Reindexação
 
@@ -176,7 +183,7 @@ Pedido do Bianco: uma página pra escrever uma folha nova sem precisar criar a p
 
 **Preview ao vivo**: `POST /escrever/preview` reaproveita o `renderizarCorpo` de verdade (o mesmo da Folha), então o preview não é uma aproximação — é literalmente o mesmo HTML que sairia na página publicada, só que sem reindexar/gravar nada. Título/subtítulo são atualizados no preview direto no cliente (sem round-trip), só o corpo markdown passa pelo servidor.
 
-**Blocos**: botões que inserem snippet de texto no textarea na posição do cursor (seção, seção oculta, citação, nota, nota itálico, lista com título, imagem com legenda) — cobrem as convenções documentadas na seção "Convenções dentro do corpo" acima.
+**Blocos**: botões que inserem snippet de texto no textarea na posição do cursor (seção, seção oculta, citação, nota, nota itálico, lista com título, imagem com legenda, separador) — cobrem as convenções documentadas na seção "Convenções dentro do corpo" acima.
 
 **Autosave**: a cada input (debounced 400ms), o estado inteiro do form vira JSON no `localStorage` (`caderno:editor:rascunho`). Ao carregar a página, se existir um rascunho salvo, oferece restaurar (com botão de descartar). Limpo automaticamente só depois de um publish com sucesso.
 

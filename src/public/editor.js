@@ -64,6 +64,7 @@
     "nota-italico": '\n\n<aside class="nota nota--italico">Texto da nota em itálico.</aside>\n\n',
     lista: "\n\n1. **Título do item**\n\n   Corpo do item.\n\n2. **Título do item**\n\n   Corpo do item.\n\n",
     imagem: '\n\n![Descrição da imagem](caminho.jpg "Legenda da imagem")\n\n',
+    separador: "\n\n---\n\n",
   };
 
   document.querySelectorAll("[data-bloco]").forEach((botao) => {
