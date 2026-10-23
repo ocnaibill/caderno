@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS posts (
   caminho_arquivo TEXT NOT NULL,
   rascunho INTEGER NOT NULL DEFAULT 0,
   permite_comentarios INTEGER NOT NULL DEFAULT 1,
+  destaque INTEGER NOT NULL DEFAULT 0,
   criado_em TEXT NOT NULL DEFAULT (datetime('now')),
   atualizado_em TEXT NOT NULL DEFAULT (datetime('now'))
 );

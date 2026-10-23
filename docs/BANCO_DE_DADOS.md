@@ -19,6 +19,7 @@ SQLite via `bun:sqlite`. Ver [ARQUITETURA.md](ARQUITETURA.md) para o porquê da 
 | `caminho_arquivo` | TEXT | Caminho relativo ao `index.md`, para reabrir o arquivo fonte |
 | `rascunho` | BOOLEAN | Default `false` (RN-02) |
 | `permite_comentarios` | BOOLEAN | Default `true` |
+| `destaque` | BOOLEAN | Default `false` — aparece em "Edições Favoritas" no Arquivo (RF-11) |
 | `criado_em` / `atualizado_em` | DATETIME | Timestamps do próprio processo de reindex, não do conteúdo |
 
 ### `tags`

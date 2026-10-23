@@ -16,6 +16,7 @@ export interface FolhaFrontmatter {
   capa?: string;
   rascunho?: boolean;
   permite_comentarios?: boolean;
+  destaque?: boolean;
   cards_finais?: CardFinal[];
 }
 

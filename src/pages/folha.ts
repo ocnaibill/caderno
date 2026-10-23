@@ -1,5 +1,6 @@
 import { iniciais, site } from "../config.ts";
 import { buscarAdjacentes, buscarFolhaPorSlug, buscarPensamentosDaFolha } from "../content/repo.ts";
+import { formatarCategoria } from "../render/categoria.ts";
 import { escapeHtml } from "../render/html.ts";
 import { layout } from "../render/layout.ts";
 import { renderizarCorpo } from "../render/markdown.ts";
@@ -13,11 +14,6 @@ function formatarData(dataIso: string): string {
     month: "long",
   }).format(data);
   return texto.charAt(0).toUpperCase() + texto.slice(1);
-}
-
-/** "desenvolvimento-ideias-hobby" -> "DESENVOLVIMENTO/IDEIAS/HOBBY" */
-function formatarCategoria(categoria: string): string {
-  return categoria.split("-").join("/").toUpperCase();
 }
 
 function renderizarControlesLeitor(): string {

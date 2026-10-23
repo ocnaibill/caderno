@@ -18,8 +18,8 @@ function reindexarFolhas(): Set<string> {
   const slugsEncontrados = new Set<string>();
 
   const upsertPost = db.prepare(`
-    INSERT INTO posts (numero, slug, titulo, subtitulo, resumo, categoria, data_publicacao, caminho_arquivo, rascunho, permite_comentarios, atualizado_em)
-    VALUES ($numero, $slug, $titulo, $subtitulo, $resumo, $categoria, $data_publicacao, $caminho_arquivo, $rascunho, $permite_comentarios, datetime('now'))
+    INSERT INTO posts (numero, slug, titulo, subtitulo, resumo, categoria, data_publicacao, caminho_arquivo, rascunho, permite_comentarios, destaque, atualizado_em)
+    VALUES ($numero, $slug, $titulo, $subtitulo, $resumo, $categoria, $data_publicacao, $caminho_arquivo, $rascunho, $permite_comentarios, $destaque, datetime('now'))
     ON CONFLICT(slug) DO UPDATE SET
       numero = excluded.numero,
       titulo = excluded.titulo,
@@ -30,6 +30,7 @@ function reindexarFolhas(): Set<string> {
       caminho_arquivo = excluded.caminho_arquivo,
       rascunho = excluded.rascunho,
       permite_comentarios = excluded.permite_comentarios,
+      destaque = excluded.destaque,
       atualizado_em = datetime('now')
   `);
 
@@ -63,6 +64,7 @@ function reindexarFolhas(): Set<string> {
       $caminho_arquivo: relative(RAIZ_CONTEUDO, caminhoArquivo),
       $rascunho: folha.frontmatter.rascunho ? 1 : 0,
       $permite_comentarios: folha.frontmatter.permite_comentarios === false ? 0 : 1,
+      $destaque: folha.frontmatter.destaque ? 1 : 0,
     });
 
     const post = buscarPostIdPorSlug.get(folha.slug);

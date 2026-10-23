@@ -79,6 +79,7 @@ resumo: "Sobre decidir construir isso do zero..."
 capa: capa.jpg
 rascunho: false
 permite_comentarios: true
+destaque: false          # true = aparece em "Edições Favoritas" no Arquivo
 ---
 ```
 
@@ -112,7 +113,7 @@ Tempo de leitura é **calculado on-the-fly** a partir da contagem de palavras do
 
 ### Busca
 
-Tabela virtual **FTS5** (`bun:sqlite` já suporta nativamente) sobre `titulo`, `resumo` e corpo, populada/atualizada no mesmo passo de reindex. Cobre a caixa "Buscar por termo ou ideia" do Arquivo sem precisar de serviço externo.
+Tabela virtual **FTS5** (`bun:sqlite` já suporta nativamente) sobre `titulo`, `resumo` e corpo, populada/atualizada no mesmo passo de reindex. Cobre a caixa "Buscar por termo ou ideia" do Arquivo sem precisar de serviço externo. Repare que `subtitulo` **não** entra na busca — só `titulo`, `resumo` e o corpo.
 
 ### Cards finais ("Glosas Marginais & Livros Citados")
 
