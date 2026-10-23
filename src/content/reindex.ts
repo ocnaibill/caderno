@@ -5,6 +5,7 @@
 // apagar ou renomear arquivos (ver docs/ARQUITETURA.md).
 
 import { Glob } from "bun";
+import { existsSync } from "node:fs";
 import { relative, resolve } from "node:path";
 import { getDb } from "../db/client.ts";
 import { derivarResumo, parseFolha, parsePensamento } from "./parse.ts";
@@ -48,7 +49,8 @@ function reindexarFolhas(): Set<string> {
   );
 
   const glob = new Glob("*/index.md");
-  for (const caminhoRelativo of glob.scanSync({ cwd: DIR_FOLHAS })) {
+  const arquivosFolhas = existsSync(DIR_FOLHAS) ? glob.scanSync({ cwd: DIR_FOLHAS }) : [];
+  for (const caminhoRelativo of arquivosFolhas) {
     const caminhoArquivo = resolve(DIR_FOLHAS, caminhoRelativo);
     const folha = parseFolha(caminhoArquivo);
     const resumo = folha.frontmatter.resumo ?? derivarResumo(folha.corpo);
@@ -104,7 +106,8 @@ function reindexarPensamentos(): Set<number> {
   `);
 
   const glob = new Glob("*.md");
-  for (const caminhoRelativo of glob.scanSync({ cwd: DIR_PENSAMENTOS })) {
+  const arquivosPensamentos = existsSync(DIR_PENSAMENTOS) ? glob.scanSync({ cwd: DIR_PENSAMENTOS }) : [];
+  for (const caminhoRelativo of arquivosPensamentos) {
     const caminhoArquivo = resolve(DIR_PENSAMENTOS, caminhoRelativo);
     const pensamento = parsePensamento(caminhoArquivo);
 
