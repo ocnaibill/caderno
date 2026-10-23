@@ -1053,6 +1053,7 @@ button.acao--ativa .material-symbols-outlined {
 .assinar-bloco p {
   margin: 0;
   color: var(--color-on-surface-variant);
+  text-align: justify;
 }
 .assinar-recentes {
   list-style: none;
