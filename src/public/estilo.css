@@ -711,8 +711,10 @@ button.acao--ativa .material-symbols-outlined {
   color: var(--color-outline);
 }
 
-/* Lista numerada — cada item é um container; a 1ª linha em negrito vira
-   "título" do item (cor primary), o resto é o corpo (on-surface-variant). */
+/* Lista numerada — cada item é um container; a 1ª linha em itálico vira
+   "título" do item (cor primary), o resto é o corpo (on-surface-variant).
+   Número fica numa coluna à esquerda (grid), ocupando as duas linhas do
+   título+corpo — medidas conferidas direto no Figma (node 3:2210). */
 .prose ol {
   padding-left: 0;
   list-style: none;
@@ -723,28 +725,34 @@ button.acao--ativa .material-symbols-outlined {
 }
 .prose ol li {
   counter-increment: item;
-  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: var(--espaco-sm);
   background: var(--color-surface-container-low);
   padding: var(--espaco-md);
-  padding-right: 3rem;
   border-radius: var(--raio);
   text-align: left;
 }
 .prose ol li::before {
   content: counter(item, decimal-leading-zero);
-  position: absolute;
-  top: var(--espaco-xs);
-  right: var(--espaco-sm);
+  grid-column: 1;
+  grid-row: 1 / -1;
   font-family: var(--fonte-mono);
-  font-size: 11px;
-  color: var(--color-outline);
+  font-size: 13px;
+  color: var(--color-secondary);
 }
 .prose ol li > p:first-child {
+  grid-column: 2;
   margin: 0;
   color: var(--color-primary);
-  font-weight: 600;
+  font-style: italic;
+  font-weight: 400;
+  font-size: calc(1.125rem * var(--escala-texto));
+  line-height: 1.625;
+  letter-spacing: 0.005em;
 }
 .prose ol li > p:not(:first-child) {
+  grid-column: 2;
   margin: var(--espaco-xs) 0 0;
   color: var(--color-on-surface-variant);
 }
