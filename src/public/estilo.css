@@ -16,6 +16,9 @@
   --color-secondary: #755940;
   --color-background: #fcf9f3;
   --color-error: #ba1a1a;
+  /* Seleção de texto (DESIGN.md > Elevation > Active Focus & Selection):
+     "warm wash... dry highlighter on porous paper", nunca o azul padrão do navegador. */
+  --color-selecao: #efebe4;
 
   --fonte-serif: "Newsreader", Georgia, serif;
   --fonte-mono: "JetBrains Mono", ui-monospace, monospace;
@@ -59,6 +62,15 @@ body {
 
 a {
   color: inherit;
+}
+
+::selection {
+  background: var(--color-selecao);
+  color: var(--color-on-surface);
+}
+::-moz-selection {
+  background: var(--color-selecao);
+  color: var(--color-on-surface);
 }
 
 img {
