@@ -923,6 +923,9 @@ button.acao--ativa .material-symbols-outlined {
   grid-template-columns: 1fr;
   gap: var(--espaco-xl);
 }
+.rodape-site__grade > * {
+  min-width: 0; /* ver .folha__layout acima — mesmo motivo */
+}
 @media (min-width: 900px) {
   .rodape-site__grade {
     /* Proporção exata do Figma (frame 3:2438): colunas de 507/400/293px
@@ -1067,6 +1070,9 @@ button.acao--ativa .material-symbols-outlined {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--espaco-xl);
+}
+.arquivo-layout > * {
+  min-width: 0; /* ver .folha__layout acima — mesmo motivo */
 }
 @media (min-width: 1100px) {
   .arquivo-layout {
@@ -1292,6 +1298,9 @@ button.acao--ativa .material-symbols-outlined {
   gap: var(--espaco-xl);
   margin-top: var(--espaco-lg);
 }
+.editor__layout > * {
+  min-width: 0; /* ver .folha__layout acima — mesmo motivo */
+}
 @media (min-width: 1100px) {
   .editor__layout {
     grid-template-columns: 1fr 1fr;
@@ -1500,6 +1509,9 @@ button.acao--ativa .material-symbols-outlined {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--espaco-xl);
+}
+.assinar > * {
+  min-width: 0; /* ver .folha__layout acima — mesmo motivo */
 }
 @media (min-width: 1100px) {
   .assinar {
