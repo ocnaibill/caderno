@@ -158,6 +158,8 @@ img {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  max-width: 1440px;
+  margin: 0 auto;
   padding: var(--espaco-md) var(--margem);
   border-bottom: 1px solid var(--color-surface-container-high);
 }
@@ -256,7 +258,12 @@ main {
   margin-right: var(--espaco-sm);
 }
 
-.folha__coluna {
+/* .folha__coluna ocupa a coluna inteira do grid (sem limite) — é só
+   .folha__leitura, dentro dela, que respeita a medida de leitura. Assim a
+   barra "Folha Nº..." + controles pode esticar até o fim da coluna (mesma
+   borda direita do botão Assinar no masthead), enquanto o texto continua
+   confortável em 680px. */
+.folha__leitura {
   max-width: var(--medida-leitura);
 }
 
@@ -304,6 +311,7 @@ main {
 .controles-leitor {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--espaco-xs);
 }
 .controle-grupo {

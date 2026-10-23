@@ -162,6 +162,7 @@ export function renderizarPaginaFolha(slug: string): Response {
           ${renderizarControlesLeitor()}
         </div>
 
+        <div class="folha__leitura">
         <h1 class="display-lg">${escapeHtml(frontmatter.titulo)}</h1>
         ${frontmatter.subtitulo ? `<p class="folha__subtitulo quote-lg">${escapeHtml(frontmatter.subtitulo)}</p>` : ""}
 
@@ -191,6 +192,7 @@ export function renderizarPaginaFolha(slug: string): Response {
         ${htmlRecomendacoes}
         ${htmlNavegacao}
         ${htmlComentario}
+        </div>
       </div>
     </div>
   </article>`;
