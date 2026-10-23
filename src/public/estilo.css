@@ -751,6 +751,12 @@ button.acao--ativa .material-symbols-outlined {
   line-height: 1.625;
   letter-spacing: 0.005em;
 }
+/* **Negrito** no markdown vira <strong>, que tem peso 700 por padrão do
+   navegador — sem isso, ficava mais pesado que o itálico 400 do Figma,
+   mesmo escrevendo o título como a convenção pede (ver ARQUITETURA.md). */
+.prose ol li > p:first-child strong {
+  font-weight: inherit;
+}
 .prose ol li > p:not(:first-child) {
   grid-column: 2;
   margin: var(--espaco-xs) 0 0;
