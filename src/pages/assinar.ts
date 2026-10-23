@@ -91,7 +91,7 @@ export function renderizarPaginaAssinar(url: URL): Response {
         <span class="label-md"><span class="material-symbols-outlined">mail</span> Correspondência Semanal</span>
         <h1 class="headline-lg">Receba as próximas folhas!!</h1>
         <p class="body-md">A gente te manda um e-mail avisando quando sair a próxima besteira que eu redigir por aqui.</p>
-        <blockquote class="assinar-piada quote-lg">"Poderia ter mandado uma carta eletrônica, se chama e-mail"<cite class="label-sm">— Thor, Odinson</cite></blockquote>
+        <blockquote class="assinar-piada quote-lg">"Poderia ter mandado uma carta eletrônica, chama-se e-mail"<cite class="label-sm">— Thor, Odinson</cite></blockquote>
 
         ${renderizarMensagem(url)}
 
