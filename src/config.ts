@@ -2,16 +2,17 @@
 // (não é por folha, nem por pensamento) — fica centralizado aqui por enquanto.
 export const site = {
   nome: "O Caderno.",
-  // Assumi o domínio do seu homelab (ocnaibill.dev) como placeholder — troque
-  // aqui quando tiver o domínio final do Caderno definido.
-  url: "https://ocnaibill.dev",
+  // CADERNO_URL no .env sobrescreve isso em produção — o placeholder abaixo
+  // (domínio do seu homelab) só vale pra desenvolvimento local.
+  url: process.env.CADERNO_URL ?? "https://ocnaibill.dev",
   autor: {
     nome: "Bianco Da Costa Oliveira",
     handle: "@ocnaibill",
     localizacao: "Brasília",
-    // Placeholder até existir uma foto de verdade — troque por site.autor.foto
-    // (caminho da imagem) quando tiver uma.
-    foto: undefined as string | undefined,
+    // Avatar do GitHub — github.com/<usuário>.png redireciona pro arquivo
+    // real em avatars.githubusercontent.com. Sem API, sem token, sem cache
+    // pra gerenciar: troque o usuário aqui se mudar de conta.
+    foto: "https://github.com/ocnaibill.png" as string | undefined,
   },
 };
 

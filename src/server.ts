@@ -1,3 +1,4 @@
+import { verificarAutenticacaoAdmin } from "./auth.ts";
 import { getDb } from "./db/client.ts";
 import { buscarUltimaFolhaPublicada } from "./content/repo.ts";
 import { responderInteracao } from "./pages/api.ts";
@@ -40,17 +41,19 @@ const server = Bun.serve({
       POST: (req) => responderInteracao(req, req.params.slug),
     },
     "/folha/:slug/disparar": {
-      POST: (req) => responderDisparo(req.params.slug),
+      POST: (req) => verificarAutenticacaoAdmin(req) ?? responderDisparo(req.params.slug),
     },
     "/folha/:slug/comentarios": {
       POST: (req, server) => responderComentario(req, server, req.params.slug),
     },
-    "/comentarios/moderar": () => renderizarModeracao(),
+    "/comentarios/moderar": (req) => verificarAutenticacaoAdmin(req) ?? renderizarModeracao(),
     "/comentarios/:id/aprovar": {
-      POST: (req) => responderModeracao(Number(req.params.id), "aprovado"),
+      POST: (req) =>
+        verificarAutenticacaoAdmin(req) ?? responderModeracao(Number(req.params.id), "aprovado"),
     },
     "/comentarios/:id/rejeitar": {
-      POST: (req) => responderModeracao(Number(req.params.id), "rejeitado"),
+      POST: (req) =>
+        verificarAutenticacaoAdmin(req) ?? responderModeracao(Number(req.params.id), "rejeitado"),
     },
     "/arquivo": (req) => renderizarPaginaArquivo(new URL(req.url)),
     "/assinar": {
@@ -64,12 +67,13 @@ const server = Bun.serve({
     },
     "/eu": () => renderizarPaginaEu(),
     "/escrever": {
-      GET: () => renderizarPaginaEditor(),
-      POST: (req) => responderPublicar(req),
+      GET: (req) => verificarAutenticacaoAdmin(req) ?? renderizarPaginaEditor(),
+      POST: (req) => verificarAutenticacaoAdmin(req) ?? responderPublicar(req),
     },
     "/escrever/preview": {
-      POST: (req) => responderPreview(req),
+      POST: (req) => verificarAutenticacaoAdmin(req) ?? responderPreview(req),
     },
+    "/saude": () => new Response("ok"),
     "/robots.txt": () => responderRobots(),
     "/sitemap.xml": () => responderSitemap(),
     "/rss.xml": () => responderRss(),

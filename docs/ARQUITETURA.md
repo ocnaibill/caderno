@@ -186,16 +186,28 @@ Pedido do Bianco: uma página pra escrever uma folha nova sem precisar criar a p
 
 `POST /folha/:slug/comentarios` grava sempre como `pendente`. Defesa contra spam, já que CAPTCHA está fora de cogitação (RNF-06): campo honeypot (`site`) escondido via CSS (`position: absolute; left: -9999px`, não `display: none` — alguns bots ignoram `display: none` mas preenchem campos "ocultos" de outras formas) — se vier preenchido, a resposta finge sucesso mas não grava nada, pra não entregar sinal de que foi pego. IP é hasheado com `Bun.hash` (não criptográfico, só pra um identificador pseudônimo de rate-limiting futuro — nunca guardamos o IP cru).
 
-`GET /comentarios/moderar` lista os pendentes de todas as folhas, com Aprovar/Rejeitar por formulário — sem autenticação (RNF-10). Aprovados aparecem na própria Folha, acima do formulário.
+`GET /comentarios/moderar` lista os pendentes de todas as folhas, com Aprovar/Rejeitar por formulário — protegido por autenticação (RNF-10, ver seção "Autenticação administrativa e deploy" abaixo). Aprovados aparecem na própria Folha, acima do formulário.
 
 ### Disparo de e-mail (RF-17/RF-18/RF-20) — integrado, nunca testado de verdade
 
 `src/email/provider.ts` fala com a API HTTP do Resend direto via `fetch` (sem SDK — RNF-02), lendo `RESEND_API_KEY`/`RESEND_FROM` do `.env` (Bun carrega sozinho). Sem essas variáveis, `enviarEmail` lança `ConfiguracaoEmailAusente` em vez de falhar silenciosamente.
 
-`POST /folha/:slug/disparar` (`src/pages/disparo.ts`) é o gatilho manual (RN-11: sem frequência fixa, então nunca automático ao publicar) — busca os assinantes `ativo` de cada formato, manda um e-mail por pessoa com o link de gerenciar/cancelar já embutido, e grava o total em `envios` (RF-20). Rota sem autenticação — é uma limitação conhecida, ver RN-11 em REGRAS_DE_NEGOCIO.md.
+`POST /folha/:slug/disparar` (`src/pages/disparo.ts`) é o gatilho manual (RN-11: sem frequência fixa, então nunca automático ao publicar) — busca os assinantes `ativo` de cada formato, manda um e-mail por pessoa com o link de gerenciar/cancelar já embutido, e grava o total em `envios` (RF-20). Protegida por autenticação (RNF-10).
 
 **Importante**: eu não tenho uma chave de API de verdade, então esse caminho nunca foi testado contra o Resend real — só testei os casos sem chave configurada (erro 503 claro) e sem assinantes (0 enviados, sem crash). Teste de ponta a ponta fica pendente de você configurar `RESEND_API_KEY`/`RESEND_FROM`.
 
 ### O que é banco "de verdade" (não derivado de markdown)
 
 `comentários`, `assinantes` e `envios` são dados gerados em runtime por terceiros (leitores) — não são conteúdo autoral, então vivem só no SQLite, sem contrapartida em arquivo.
+
+### Autenticação administrativa e deploy (RNF-10)
+
+`src/auth.ts` (`verificarAutenticacaoAdmin`) protege com HTTP Basic Auth todas as rotas que só o autor deveria acessar: `GET/POST /escrever`, `POST /escrever/preview`, `GET /comentarios/moderar` (+ aprovar/rejeitar) e `POST /folha/:slug/disparar`. Credenciais vêm de `ADMIN_USER`/`ADMIN_PASSWORD` no `.env`.
+
+**Falha fechado, não aberto**: sem essas duas variáveis configuradas, a rota responde 503 (painel desligado) em vez de deixar passar sem checar nada — decisão deliberada pra nunca expor `/escrever` por acidente num deploy sem `.env` completo.
+
+Cada rota chama `verificarAutenticacaoAdmin(req) ?? handler(...)` — tentei primeiro um wrapper genérico (`protegido(handler)`), mas isso quebrava a inferência de tipo do Bun pros `req.params` tipados por rota; o padrão inline por rota é mais repetitivo mas preserva os tipos.
+
+A autoria exibida no site (`site.autor` em `src/config.ts`) **não** vem do `git config` do ambiente — é um objeto estático (nome, handle, localização, foto), porque o app nunca chama `git` em nenhum momento (nem o reindex, nem o `/escrever`; quem grava os `.md` é `Bun.write` puro). A foto usa `https://github.com/ocnaibill.png`, URL pública e estável do GitHub (sem API, sem token) — trocar de usuário é só editar essa string.
+
+Empacotamento em Docker (`Dockerfile`, `docker-compose.yml`, `.dockerignore`) e o que falta configurar manualmente no homelab (proxy reverso, domínio do Resend, backup do SQLite, sincronizar `content/` de volta pro git) estão documentados em [`DEPLOY.md`](./DEPLOY.md).

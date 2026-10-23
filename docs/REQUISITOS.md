@@ -28,7 +28,7 @@ Ver [TELAS_E_UX.md](TELAS_E_UX.md) para o mapeamento de cada tela e [REGRAS_DE_N
 
 ### Comentários
 - **RF-14**: Permitir que um leitor envie comentário em uma folha com `permite_comentarios: true`, com nome opcional (RN-04: sempre anônimo por política, sem toggle). ✅ `POST /folha/:slug/comentarios`, com honeypot anti-spam.
-- **RF-15**: Comentário só aparece publicamente após aprovação manual (RN-05). ✅ `GET /comentarios/moderar` + `POST /comentarios/:id/aprovar|rejeitar` — painel sem autenticação, ver RNF-10.
+- **RF-15**: Comentário só aparece publicamente após aprovação manual (RN-05). ✅ `GET /comentarios/moderar` + `POST /comentarios/:id/aprovar|rejeitar` — painel protegido por autenticação, ver RNF-10.
 
 ### Assinatura e e-mail
 - **RF-16**: Permitir inscrição por e-mail, com escolha de formato (Texto Puro / Edição Editorial). ✅ `POST /assinar`.
@@ -51,7 +51,7 @@ Ver [TELAS_E_UX.md](TELAS_E_UX.md) para o mapeamento de cada tela e [REGRAS_DE_N
 - **RNF-05 — Performance de leitura**: tempo até o texto ficar legível (sem esperar JS pesado) deve ser baixo — a experiência de leitura não pode depender de hidratação de UI pesada.
 - **RNF-06 — Resiliência a spam**: formulários de comentário e assinatura usam defesas simples (honeypot, moderação manual) já que CAPTCHA está fora de cogitação.
 - **RNF-07 — Disponibilidade**: aceitável rodar em infraestrutura pessoal (homelab) com disponibilidade "best effort" — não é um serviço com SLA, é um projeto pessoal.
-- **RNF-10 — Rotas administrativas protegidas antes do deploy**: `POST /folha/:slug/disparar`, `GET /comentarios/moderar` (+ aprovar/rejeitar) e `GET/POST /escrever` não têm autenticação nenhuma hoje — só "escondidas" por não terem link público. Aceitável enquanto o site só roda localmente; vira requisito de verdade antes de ir pro homelab (ver preparação de deploy).
+- **RNF-10 — Rotas administrativas protegidas**: ✅ `POST /folha/:slug/disparar`, `GET /comentarios/moderar` (+ aprovar/rejeitar), `GET/POST /escrever` e `POST /escrever/preview` exigem HTTP Basic Auth (`ADMIN_USER`/`ADMIN_PASSWORD` no `.env`). Falha fechado: sem essas variáveis configuradas, as rotas retornam 503 (desligadas) em vez de ficarem abertas. Implementado em `src/auth.ts` / `verificarAutenticacaoAdmin`.
 
 ## Requisitos adicionais (pedidos depois do levantamento inicial)
 

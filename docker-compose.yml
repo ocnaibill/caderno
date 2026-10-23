@@ -1,0 +1,19 @@
+# Pensado pra rodar atrás do seu Nginx Proxy Manager/Cloudflare Tunnel
+# (não inclui rede/labels específicos daqui — aponta o proxy pra porta 3000
+# do container, do jeito que você já faz com os outros serviços).
+services:
+  caderno:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      # content/ precisa ser volume: é onde /escrever grava as folhas novas
+      # direto no host, pra não sumir quando o container reiniciar/rebuildar.
+      - ./content:/app/content
+      - caderno-data:/app/data
+
+volumes:
+  caderno-data:
