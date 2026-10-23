@@ -300,6 +300,13 @@ main {
   grid-template-columns: 1fr;
   gap: var(--espaco-xl);
 }
+/* Item de grid tem min-width:auto por padrão, ou seja, nunca encolhe além
+   do conteúdo mais largo lá dentro (ex. o iframe acima) — isso estoura a
+   coluna pro lado mesmo com grid-template-columns:1fr. min-width:0 deixa
+   o conteúdo (não a coluna) ser o responsável por lidar com o overflow. */
+.folha__layout > * {
+  min-width: 0;
+}
 @media (min-width: 1100px) {
   .folha__layout {
     grid-template-columns: 287px 1fr;
@@ -652,6 +659,18 @@ button.acao--ativa .material-symbols-outlined {
 
 .prose figure {
   margin: var(--espaco-lg) 0;
+}
+/* Embeds colados direto no markdown (HTML cru — ver ARQUITETURA.md) vêm com
+   width/height fixos (ex. o embed padrão do YouTube, 560x315) e sem isso
+   estouram a largura da tela no celular, empurrando o site inteiro pro
+   modo "zoom out" de desktop. max-width:100%+height:auto preserva a
+   proporção usando os atributos width/height como base intrínseca. */
+.prose iframe,
+.prose video,
+.prose embed,
+.prose object {
+  max-width: 100%;
+  height: auto;
 }
 .prose figure img {
   border-radius: 0;
