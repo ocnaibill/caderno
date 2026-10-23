@@ -79,26 +79,51 @@ const server = Bun.serve({
     "/robots.txt": () => responderRobots(),
     "/sitemap.xml": () => responderSitemap(),
     "/rss.xml": () => responderRss(),
+    // ?v=<hash> (ver src/render/layout.ts) muda sozinho quando o conteúdo
+    // muda, então dá pra cachear "pra sempre" sem risco de servir algo
+    // desatualizado — o oposto do que causou o bug do CSS preso em cache
+    // na CDN depois de um deploy.
     "/public/estilo.css": new Response(Bun.file("src/public/estilo.css"), {
-      headers: { "Content-Type": "text/css; charset=utf-8" },
+      headers: {
+        "Content-Type": "text/css; charset=utf-8",
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
     }),
     "/public/interacoes.js": new Response(Bun.file("src/public/interacoes.js"), {
-      headers: { "Content-Type": "text/javascript; charset=utf-8" },
+      headers: {
+        "Content-Type": "text/javascript; charset=utf-8",
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
     }),
     "/public/formato-preview.js": new Response(Bun.file("src/public/formato-preview.js"), {
-      headers: { "Content-Type": "text/javascript; charset=utf-8" },
+      headers: {
+        "Content-Type": "text/javascript; charset=utf-8",
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
     }),
     "/public/acoes.js": new Response(Bun.file("src/public/acoes.js"), {
-      headers: { "Content-Type": "text/javascript; charset=utf-8" },
+      headers: {
+        "Content-Type": "text/javascript; charset=utf-8",
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
     }),
     "/public/leitor.js": new Response(Bun.file("src/public/leitor.js"), {
-      headers: { "Content-Type": "text/javascript; charset=utf-8" },
+      headers: {
+        "Content-Type": "text/javascript; charset=utf-8",
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
     }),
     "/public/editor.js": new Response(Bun.file("src/public/editor.js"), {
-      headers: { "Content-Type": "text/javascript; charset=utf-8" },
+      headers: {
+        "Content-Type": "text/javascript; charset=utf-8",
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
     }),
     "/public/github.svg": new Response(Bun.file("src/public/github.svg"), {
-      headers: { "Content-Type": "image/svg+xml; charset=utf-8" },
+      headers: {
+        "Content-Type": "image/svg+xml; charset=utf-8",
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
     }),
   },
   fetch() {

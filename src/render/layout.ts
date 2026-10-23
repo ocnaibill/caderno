@@ -1,5 +1,21 @@
+import { readFileSync, readdirSync } from "node:fs";
+import { resolve } from "node:path";
 import { site } from "../config.ts";
 import { escapeHtml } from "./html.ts";
+
+// Cache-busting pros assets de /public/: sem isso, um deploy novo não troca
+// a URL do CSS/JS, e CDN (Cloudflare) na frente pode continuar servindo a
+// versão em cache por horas mesmo com o servidor já atualizado — foi
+// exatamente o que aconteceu no primeiro fix do overflow no mobile.
+// Recalculado uma vez por processo, a partir do conteúdo real dos arquivos.
+const DIR_PUBLIC = resolve(import.meta.dir, "../public");
+const ASSET_VERSION = Bun.hash(
+  Buffer.concat(readdirSync(DIR_PUBLIC).sort().map((nome) => readFileSync(resolve(DIR_PUBLIC, nome)))),
+).toString(36);
+
+function asset(caminho: string): string {
+  return `${caminho}?v=${ASSET_VERSION}`;
+}
 
 type PaginaAtiva = "folha" | "arquivo" | "eu" | "assinar" | undefined;
 
@@ -67,7 +83,7 @@ export function layout({
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
-  <link rel="stylesheet" href="/public/estilo.css" />
+  <link rel="stylesheet" href="${asset("/public/estilo.css")}" />
 </head>
 <body>
   <header class="masthead">
@@ -113,15 +129,15 @@ ${corpo}
       <div class="rodape-site__assinatura">
         <a class="rodape-site__perfil" href="https://github.com/ocnaibill" target="_blank" rel="noopener noreferrer">
           <span>@ocnaibill</span>
-          <img src="/public/github.svg" width="15" height="15" alt="GitHub" />
+          <img src="${asset("/public/github.svg")}" width="15" height="15" alt="GitHub" />
         </a>
       </div>
     </div>
   </footer>
-  <script src="/public/interacoes.js" defer></script>
-  <script src="/public/acoes.js" defer></script>
-  <script src="/public/leitor.js" defer></script>
-  ${scripts.map((src) => `<script src="${src}" defer></script>`).join("\n")}
+  <script src="${asset("/public/interacoes.js")}" defer></script>
+  <script src="${asset("/public/acoes.js")}" defer></script>
+  <script src="${asset("/public/leitor.js")}" defer></script>
+  ${scripts.map((src) => `<script src="${asset(src)}" defer></script>`).join("\n")}
 </body>
 </html>`;
 }
