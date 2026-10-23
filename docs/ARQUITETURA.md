@@ -164,6 +164,24 @@ A partir do **mesmo markdown fonte**, geramos duas versões por edição:
 
 `src/email/render.ts` tem dois pares de função: `renderizarAmostra*` (preview truncado na tela Assinar) e `renderizarEmail*` (conteúdo completo, com o rodapé de gerenciar/cancelar usando o token do próprio assinante — usadas no disparo de verdade).
 
+### Página de redigir — `/escrever` (escondida, RNF-10)
+
+Pedido do Bianco: uma página pra escrever uma folha nova sem precisar criar a pasta/arquivo à mão, com blocos de ajuda, preview ao vivo e autosave. `src/content/escritor.ts` tem a parte de gravar:
+
+- `buscarProximoNumero()`: `SELECT MAX(numero) FROM posts` + 1 — assume que o índice está em dia (reindexa ao publicar, então na prática sempre está).
+- `gerarSlug(titulo)`: mesma lógica de normalização usada em outros lugares do projeto (remove acento, minúsculo, espaços viram hífen).
+- `construirFrontmatter`: serializador YAML escrito à mão (sem lib nova — RNF-02) — seguro porque o formato do frontmatter é conhecido e controlado por nós, nunca texto arbitrário de fora.
+- `gravarFolha`: cria `content/folhas/NNN-slug/index.md` com `mkdirSync`/`writeFileSync`.
+- `reindexar()`: roda `bun run src/content/reindex.ts` como subprocesso (`Bun.spawn`) em vez de refatorar o script existente pra virar uma função importável — mais simples, mesmo resultado.
+
+**Preview ao vivo**: `POST /escrever/preview` reaproveita o `renderizarCorpo` de verdade (o mesmo da Folha), então o preview não é uma aproximação — é literalmente o mesmo HTML que sairia na página publicada, só que sem reindexar/gravar nada. Título/subtítulo são atualizados no preview direto no cliente (sem round-trip), só o corpo markdown passa pelo servidor.
+
+**Blocos**: botões que inserem snippet de texto no textarea na posição do cursor (seção, seção oculta, citação, nota, nota itálico, lista com título, imagem com legenda) — cobrem as convenções documentadas na seção "Convenções dentro do corpo" acima.
+
+**Autosave**: a cada input (debounced 400ms), o estado inteiro do form vira JSON no `localStorage` (`caderno:editor:rascunho`). Ao carregar a página, se existir um rascunho salvo, oferece restaurar (com botão de descartar). Limpo automaticamente só depois de um publish com sucesso.
+
+**Publicar**: `POST /escrever` recebe o mesmo JSON do autosave, grava o arquivo, reindexa, e devolve `{ slug }` — o cliente então limpa o rascunho do `localStorage` e redireciona pra `/folha/:slug` de verdade. Testado de ponta a ponta: preencher, inserir blocos, adicionar card final, publicar — o arquivo gerado e a página publicada ficaram corretos.
+
 ### Comentários (RF-14/RF-15)
 
 `POST /folha/:slug/comentarios` grava sempre como `pendente`. Defesa contra spam, já que CAPTCHA está fora de cogitação (RNF-06): campo honeypot (`site`) escondido via CSS (`position: absolute; left: -9999px`, não `display: none` — alguns bots ignoram `display: none` mas preenchem campos "ocultos" de outras formas) — se vier preenchido, a resposta finge sucesso mas não grava nada, pra não entregar sinal de que foi pego. IP é hasheado com `Bun.hash` (não criptográfico, só pra um identificador pseudônimo de rate-limiting futuro — nunca guardamos o IP cru).

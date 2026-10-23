@@ -15,6 +15,7 @@ import {
   responderModeracao,
 } from "./pages/comentarios.ts";
 import { responderDisparo } from "./pages/disparo.ts";
+import { renderizarPaginaEditor, responderPreview, responderPublicar } from "./pages/editor.ts";
 import { renderizarPaginaEu } from "./pages/eu.ts";
 import { renderizarPaginaFolha, responderBaixarMarkdown } from "./pages/folha.ts";
 import { responderRobots, responderRss, responderSitemap } from "./pages/seo.ts";
@@ -62,6 +63,13 @@ const server = Bun.serve({
       POST: (req) => responderGerenciar(req),
     },
     "/eu": () => renderizarPaginaEu(),
+    "/escrever": {
+      GET: () => renderizarPaginaEditor(),
+      POST: (req) => responderPublicar(req),
+    },
+    "/escrever/preview": {
+      POST: (req) => responderPreview(req),
+    },
     "/robots.txt": () => responderRobots(),
     "/sitemap.xml": () => responderSitemap(),
     "/rss.xml": () => responderRss(),
@@ -78,6 +86,9 @@ const server = Bun.serve({
       headers: { "Content-Type": "text/javascript; charset=utf-8" },
     }),
     "/public/leitor.js": new Response(Bun.file("src/public/leitor.js"), {
+      headers: { "Content-Type": "text/javascript; charset=utf-8" },
+    }),
+    "/public/editor.js": new Response(Bun.file("src/public/editor.js"), {
       headers: { "Content-Type": "text/javascript; charset=utf-8" },
     }),
   },

@@ -1196,6 +1196,185 @@ button.acao--ativa .material-symbols-outlined {
   padding: 1px 6px;
 }
 
+/* Editor (página de redigir, escondida, RNF-10) */
+.editor {
+  padding: var(--espaco-lg) var(--margem) var(--espaco-xl);
+}
+.editor__cabecalho {
+  margin-bottom: var(--espaco-xs);
+}
+.editor__cabecalho h1 {
+  margin: 0 0 var(--espaco-xs);
+}
+.editor__aviso-rascunho {
+  display: block;
+  background: var(--color-surface-container-high);
+  padding: var(--espaco-sm) var(--espaco-md);
+  border-radius: var(--raio-lg);
+  margin: var(--espaco-md) 0;
+}
+.editor__aviso-rascunho button {
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.editor__layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--espaco-xl);
+  margin-top: var(--espaco-lg);
+}
+@media (min-width: 1100px) {
+  .editor__layout {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+  .editor__preview {
+    position: sticky;
+    top: var(--espaco-xl);
+  }
+}
+
+.editor__coluna-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-lg);
+}
+.editor__bloco {
+  background: var(--color-surface-container-low);
+  border-radius: var(--raio-xl);
+  padding: var(--espaco-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-md);
+}
+.editor__bloco-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.editor__linha {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--espaco-md);
+}
+.editor__campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-xs);
+}
+.editor__campo input,
+.editor__campo textarea {
+  background: var(--color-surface-container-lowest);
+  border: none;
+  border-radius: var(--raio-lg);
+  padding: var(--espaco-sm);
+  font-family: var(--fonte-serif);
+  font-size: 15px;
+  color: var(--color-on-surface);
+  width: 100%;
+}
+.editor__checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-xs);
+  font-size: 14px;
+}
+
+.editor__card-linha {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr auto;
+  gap: var(--espaco-xs);
+  margin-top: var(--espaco-xs);
+}
+.editor__card-linha input {
+  background: var(--color-surface-container-lowest);
+  border: none;
+  border-radius: var(--raio);
+  padding: var(--espaco-xs) var(--espaco-sm);
+  font-family: var(--fonte-serif);
+  font-size: 14px;
+}
+.editor__card-remover {
+  background: var(--color-surface-container-high);
+  border: none;
+  border-radius: var(--raio);
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--color-on-surface-variant);
+}
+.editor__botao-secundario {
+  background: var(--color-surface-container-high);
+  border: none;
+  border-radius: var(--raio);
+  padding: var(--espaco-xs) var(--espaco-sm);
+  font-family: var(--fonte-mono);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.editor__blocos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-xs);
+}
+.editor__blocos button {
+  background: var(--color-surface-container-lowest);
+  border: none;
+  border-radius: var(--raio);
+  padding: var(--espaco-xs) var(--espaco-sm);
+  font-family: var(--fonte-mono);
+  font-size: 12px;
+  cursor: pointer;
+}
+.editor__blocos button:hover {
+  background: var(--color-surface-container-high);
+}
+.editor__textarea-corpo {
+  font-family: var(--fonte-mono);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 420px;
+  resize: vertical;
+}
+
+.editor__publicar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-md);
+}
+.editor__botao-principal {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border: none;
+  border-radius: var(--raio-lg);
+  padding: var(--espaco-sm) var(--espaco-lg);
+  font-family: var(--fonte-mono);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.editor__preview {
+  background: var(--color-surface-container-low);
+  border-radius: var(--raio-xl);
+  padding: var(--espaco-lg);
+}
+.editor__preview-folha {
+  margin-top: var(--espaco-md);
+  background: var(--color-surface);
+  border-radius: var(--raio-lg);
+  padding: var(--espaco-lg);
+}
+#preview-titulo:empty::before {
+  content: "Título da folha";
+  opacity: 0.4;
+}
+
 /* Moderação de comentários (painel escondido, RNF-10) */
 .moderacao {
   padding: var(--espaco-lg) var(--margem) var(--espaco-xl);

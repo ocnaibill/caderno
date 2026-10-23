@@ -51,6 +51,10 @@ Ver [TELAS_E_UX.md](TELAS_E_UX.md) para o mapeamento de cada tela e [REGRAS_DE_N
 - **RNF-05 — Performance de leitura**: tempo até o texto ficar legível (sem esperar JS pesado) deve ser baixo — a experiência de leitura não pode depender de hidratação de UI pesada.
 - **RNF-06 — Resiliência a spam**: formulários de comentário e assinatura usam defesas simples (honeypot, moderação manual) já que CAPTCHA está fora de cogitação.
 - **RNF-07 — Disponibilidade**: aceitável rodar em infraestrutura pessoal (homelab) com disponibilidade "best effort" — não é um serviço com SLA, é um projeto pessoal.
-- **RNF-10 — Rotas administrativas protegidas antes do deploy**: `POST /folha/:slug/disparar`, `GET /comentarios/moderar` (+ aprovar/rejeitar) e a futura página de redigir não têm autenticação nenhuma hoje — só "escondidas" por não terem link público. Aceitável enquanto o site só roda localmente; vira requisito de verdade antes de ir pro homelab (ver preparação de deploy).
+- **RNF-10 — Rotas administrativas protegidas antes do deploy**: `POST /folha/:slug/disparar`, `GET /comentarios/moderar` (+ aprovar/rejeitar) e `GET/POST /escrever` não têm autenticação nenhuma hoje — só "escondidas" por não terem link público. Aceitável enquanto o site só roda localmente; vira requisito de verdade antes de ir pro homelab (ver preparação de deploy).
+
+## Requisitos adicionais (pedidos depois do levantamento inicial)
+
+- **RF-24**: Página pra redigir uma folha nova sem editar arquivo à mão — campos de frontmatter, blocos de ajuda pras convenções do corpo (seção, nota, lista com título, etc.), preview ao vivo, autosave em `localStorage` (evita perder o que já foi escrito) e botão único de salvar/publicar que grava o `.md` no lugar certo (número sequencial calculado automaticamente) e reindexa. ✅ `GET/POST /escrever` + `POST /escrever/preview` — ver ARQUITETURA.md.
 - **RNF-08 — Idioma único**: PT-BR, fuso de Brasília (BRT) — sem requisito de internacionalização.
 - **RNF-09 — Deliverability de e-mail**: uso de provedor terceirizado (Resend/Postmark) com SPF/DKIM configurados corretamente, para não cair em spam.
