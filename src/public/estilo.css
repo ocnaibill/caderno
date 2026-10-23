@@ -316,6 +316,7 @@ main {
   display: flex;
   flex-direction: column;
   gap: var(--espaco-lg);
+  font-family: var(--fonte-serif);
 }
 .anotacao-margem,
 .indice-secoes {
@@ -353,6 +354,7 @@ main {
    confortável em 680px. */
 .folha__leitura {
   max-width: var(--medida-leitura);
+  font-family: var(--fonte-serif);
 }
 
 /* Linha "Folha Nº..." + controles do leitor, lado a lado com a sidebar */
