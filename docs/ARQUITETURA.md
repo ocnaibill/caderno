@@ -164,6 +164,12 @@ A partir do **mesmo markdown fonte**, geramos duas versões por edição:
 
 `src/email/render.ts` tem dois pares de função: `renderizarAmostra*` (preview truncado na tela Assinar) e `renderizarEmail*` (conteúdo completo, com o rodapé de gerenciar/cancelar usando o token do próprio assinante — usadas no disparo de verdade).
 
+### Comentários (RF-14/RF-15)
+
+`POST /folha/:slug/comentarios` grava sempre como `pendente`. Defesa contra spam, já que CAPTCHA está fora de cogitação (RNF-06): campo honeypot (`site`) escondido via CSS (`position: absolute; left: -9999px`, não `display: none` — alguns bots ignoram `display: none` mas preenchem campos "ocultos" de outras formas) — se vier preenchido, a resposta finge sucesso mas não grava nada, pra não entregar sinal de que foi pego. IP é hasheado com `Bun.hash` (não criptográfico, só pra um identificador pseudônimo de rate-limiting futuro — nunca guardamos o IP cru).
+
+`GET /comentarios/moderar` lista os pendentes de todas as folhas, com Aprovar/Rejeitar por formulário — sem autenticação (RNF-10). Aprovados aparecem na própria Folha, acima do formulário.
+
 ### Disparo de e-mail (RF-17/RF-18/RF-20) — integrado, nunca testado de verdade
 
 `src/email/provider.ts` fala com a API HTTP do Resend direto via `fetch` (sem SDK — RNF-02), lendo `RESEND_API_KEY`/`RESEND_FROM` do `.env` (Bun carrega sozinho). Sem essas variáveis, `enviarEmail` lança `ConfiguracaoEmailAusente` em vez de falhar silenciosamente.

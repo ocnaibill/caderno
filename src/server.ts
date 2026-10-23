@@ -9,6 +9,11 @@ import {
   responderCancelamento,
   responderGerenciar,
 } from "./pages/assinar.ts";
+import {
+  renderizarModeracao,
+  responderComentario,
+  responderModeracao,
+} from "./pages/comentarios.ts";
 import { responderDisparo } from "./pages/disparo.ts";
 import { renderizarPaginaEu } from "./pages/eu.ts";
 import { renderizarPaginaFolha, responderBaixarMarkdown } from "./pages/folha.ts";
@@ -28,13 +33,23 @@ const server = Bun.serve({
       }
       return Response.redirect(`/folha/${ultima.slug}`, 302);
     },
-    "/folha/:slug": (req) => renderizarPaginaFolha(req.params.slug),
+    "/folha/:slug": (req) => renderizarPaginaFolha(req.params.slug, new URL(req.url)),
     "/folha/:slug/baixar.md": (req) => responderBaixarMarkdown(req.params.slug),
     "/folha/:slug/interacao": {
       POST: (req) => responderInteracao(req, req.params.slug),
     },
     "/folha/:slug/disparar": {
       POST: (req) => responderDisparo(req.params.slug),
+    },
+    "/folha/:slug/comentarios": {
+      POST: (req, server) => responderComentario(req, server, req.params.slug),
+    },
+    "/comentarios/moderar": () => renderizarModeracao(),
+    "/comentarios/:id/aprovar": {
+      POST: (req) => responderModeracao(Number(req.params.id), "aprovado"),
+    },
+    "/comentarios/:id/rejeitar": {
+      POST: (req) => responderModeracao(Number(req.params.id), "rejeitado"),
     },
     "/arquivo": (req) => renderizarPaginaArquivo(new URL(req.url)),
     "/assinar": {

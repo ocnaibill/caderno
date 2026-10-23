@@ -1,6 +1,11 @@
 import { readFileSync } from "node:fs";
 import { iniciais, site } from "../config.ts";
-import { buscarAdjacentes, buscarFolhaPorSlug, buscarPensamentosDaFolha } from "../content/repo.ts";
+import {
+  buscarAdjacentes,
+  buscarComentariosAprovados,
+  buscarFolhaPorSlug,
+  buscarPensamentosDaFolha,
+} from "../content/repo.ts";
 import { formatarCategoria } from "../render/categoria.ts";
 import { escapeHtml } from "../render/html.ts";
 import { layout } from "../render/layout.ts";
@@ -38,7 +43,7 @@ function renderizarControlesLeitor(): string {
   </div>`;
 }
 
-export function renderizarPaginaFolha(slug: string): Response {
+export function renderizarPaginaFolha(slug: string, url: URL): Response {
   const resultado = buscarFolhaPorSlug(slug);
   if (!resultado) {
     return new Response("Folha não encontrada.", { status: 404 });
@@ -123,14 +128,43 @@ export function renderizarPaginaFolha(slug: string): Response {
 
   const htmlNavegacao = `<nav class="navegacao-edicoes">${cardAnterior}${cardProxima}</nav>`;
 
-  const htmlComentario = `<section class="comentario" aria-label="Comentar">
+  const comentariosAprovados = buscarComentariosAprovados(folha.slug);
+  const statusComentario = url.searchParams.get("comentario");
+
+  const htmlListaComentarios = comentariosAprovados.length
+    ? `<ul class="comentario__lista">
+        ${comentariosAprovados
+          .map(
+            (c) => `<li class="comentario__item">
+              <p class="comentario__item-corpo">${escapeHtml(c.corpo)}</p>
+              <span class="label-sm">${escapeHtml(c.nome ?? "Anônimo")}</span>
+            </li>`,
+          )
+          .join("\n")}
+      </ul>`
+    : "";
+
+  const htmlMensagemComentario =
+    statusComentario === "enviado"
+      ? `<p class="comentario__mensagem">Recebido — aparece aqui assim que eu aprovar.</p>`
+      : statusComentario === "erro"
+        ? `<p class="comentario__mensagem comentario__mensagem--erro">Faltou escrever alguma coisa.</p>`
+        : "";
+
+  const htmlComentario =
+    frontmatter.permite_comentarios === false
+      ? ""
+      : `<section class="comentario" aria-label="Comentar">
     <span class="label-md">Las Cartas</span>
     <h2 class="comentario__titulo headline-sm">Vem, dê pitaco.</h2>
     <p class="comentario__descricao body-sm">
       O caderno pode até ser meu, e conter as minhas loucuras. Mas isso não significa que você não possa fazer algo além de dar palco pra maluco. Me diz o que tem pra dizer, e aí podemos deixar aqui junto das mil anotações.
     </p>
+    ${htmlListaComentarios}
+    ${htmlMensagemComentario}
     <form class="comentario__form" method="post" action="/folha/${folha.slug}/comentarios">
       <input type="text" name="nome" placeholder="Seu nome (opcional)" />
+      <input type="text" name="site" class="comentario__honeypot" tabindex="-1" autocomplete="off" aria-hidden="true" />
       <textarea name="corpo" placeholder="Escreva aqui sua observação sem pressa..." rows="3" required></textarea>
       <div class="comentario__rodape">
         <span class="comentario__aviso"><span class="material-symbols-outlined">lock</span> Envio anônimo e sem indexadores públicos</span>

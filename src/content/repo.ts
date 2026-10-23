@@ -365,3 +365,77 @@ export function buscarEnviosDaFolha(slug: string): EnvioRegistrado[] {
     )
     .all(slug);
 }
+
+export type StatusComentario = "pendente" | "aprovado" | "rejeitado";
+
+export interface NovoComentario {
+  slug: string;
+  nome: string | null;
+  email: string | null;
+  corpo: string;
+  ipHash: string | null;
+}
+
+/** RF-14: cria um comentário sempre como 'pendente' (RN-05). */
+export function criarComentario(dados: NovoComentario): boolean {
+  const db = getDb();
+  const post = db.query<{ id: number }, [string]>("SELECT id FROM posts WHERE slug = ?").get(dados.slug);
+  if (!post) return false;
+
+  db.query(
+    `INSERT INTO comentarios (post_id, nome, email, corpo, ip_hash, status)
+     VALUES (?, ?, ?, ?, ?, 'pendente')`,
+  ).run(post.id, dados.nome, dados.email, dados.corpo, dados.ipHash);
+  return true;
+}
+
+export interface ComentarioAprovado {
+  id: number;
+  nome: string | null;
+  corpo: string;
+  criado_em: string;
+}
+
+/** RF-15: só os aprovados aparecem publicamente na folha. */
+export function buscarComentariosAprovados(slug: string): ComentarioAprovado[] {
+  const db = getDb();
+  return db
+    .query<ComentarioAprovado, [string]>(
+      `SELECT c.id, c.nome, c.corpo, c.criado_em
+       FROM comentarios c
+       JOIN posts p ON p.id = c.post_id
+       WHERE p.slug = ? AND c.status = 'aprovado'
+       ORDER BY c.criado_em ASC`,
+    )
+    .all(slug);
+}
+
+export interface ComentarioPendente {
+  id: number;
+  nome: string | null;
+  email: string | null;
+  corpo: string;
+  criado_em: string;
+  post_slug: string;
+  post_titulo: string;
+  post_numero: number;
+}
+
+export function buscarComentariosPendentes(): ComentarioPendente[] {
+  const db = getDb();
+  return db
+    .query<ComentarioPendente, []>(
+      `SELECT c.id, c.nome, c.email, c.corpo, c.criado_em,
+              p.slug AS post_slug, p.titulo AS post_titulo, p.numero AS post_numero
+       FROM comentarios c
+       JOIN posts p ON p.id = c.post_id
+       WHERE c.status = 'pendente'
+       ORDER BY c.criado_em ASC`,
+    )
+    .all();
+}
+
+export function moderarComentario(id: number, status: "aprovado" | "rejeitado"): void {
+  const db = getDb();
+  db.query("UPDATE comentarios SET status = ? WHERE id = ?").run(status, id);
+}

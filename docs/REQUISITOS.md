@@ -27,8 +27,8 @@ Ver [TELAS_E_UX.md](TELAS_E_UX.md) para o mapeamento de cada tela e [REGRAS_DE_N
 - **RF-13**: Renderizar `content/paginas/eu.md` como página estática, na mesma estética do restante do site. ✅
 
 ### Comentários
-- **RF-14**: Permitir que um leitor envie comentário em uma folha com `permite_comentarios: true`, com nome opcional, e-mail opcional e opção de identidade oculta.
-- **RF-15**: Comentário só aparece publicamente após aprovação manual (RN-05).
+- **RF-14**: Permitir que um leitor envie comentário em uma folha com `permite_comentarios: true`, com nome opcional (RN-04: sempre anônimo por política, sem toggle). ✅ `POST /folha/:slug/comentarios`, com honeypot anti-spam.
+- **RF-15**: Comentário só aparece publicamente após aprovação manual (RN-05). ✅ `GET /comentarios/moderar` + `POST /comentarios/:id/aprovar|rejeitar` — painel sem autenticação, ver RNF-10.
 
 ### Assinatura e e-mail
 - **RF-16**: Permitir inscrição por e-mail, com escolha de formato (Texto Puro / Edição Editorial). ✅ `POST /assinar`.
@@ -51,6 +51,6 @@ Ver [TELAS_E_UX.md](TELAS_E_UX.md) para o mapeamento de cada tela e [REGRAS_DE_N
 - **RNF-05 — Performance de leitura**: tempo até o texto ficar legível (sem esperar JS pesado) deve ser baixo — a experiência de leitura não pode depender de hidratação de UI pesada.
 - **RNF-06 — Resiliência a spam**: formulários de comentário e assinatura usam defesas simples (honeypot, moderação manual) já que CAPTCHA está fora de cogitação.
 - **RNF-07 — Disponibilidade**: aceitável rodar em infraestrutura pessoal (homelab) com disponibilidade "best effort" — não é um serviço com SLA, é um projeto pessoal.
-- **RNF-10 — Rotas administrativas protegidas antes do deploy** (novo): `POST /folha/:slug/disparar` (e a futura página de redigir) não têm autenticação nenhuma hoje — são só "escondidas" por não terem link público. Isso é aceitável enquanto o site só roda localmente, mas vira requisito de verdade antes de ir pro homelab (ver preparação de deploy).
+- **RNF-10 — Rotas administrativas protegidas antes do deploy**: `POST /folha/:slug/disparar`, `GET /comentarios/moderar` (+ aprovar/rejeitar) e a futura página de redigir não têm autenticação nenhuma hoje — só "escondidas" por não terem link público. Aceitável enquanto o site só roda localmente; vira requisito de verdade antes de ir pro homelab (ver preparação de deploy).
 - **RNF-08 — Idioma único**: PT-BR, fuso de Brasília (BRT) — sem requisito de internacionalização.
 - **RNF-09 — Deliverability de e-mail**: uso de provedor terceirizado (Resend/Postmark) com SPF/DKIM configurados corretamente, para não cair em spam.

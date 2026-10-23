@@ -849,6 +849,39 @@ button.acao--ativa .material-symbols-outlined {
   font-size: 13px;
   cursor: pointer;
 }
+.comentario__honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.comentario__lista {
+  list-style: none;
+  margin: 0 0 var(--espaco-md);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-sm);
+}
+.comentario__item {
+  background: var(--color-surface-container-lowest);
+  border-radius: var(--raio-lg);
+  padding: var(--espaco-sm) var(--espaco-md);
+}
+.comentario__item-corpo {
+  margin: 0 0 var(--espaco-xs);
+}
+.comentario__mensagem {
+  margin: 0 0 var(--espaco-md);
+  padding: var(--espaco-sm) var(--espaco-md);
+  background: var(--color-surface-container-high);
+  border-radius: var(--raio-lg);
+  font-size: 14px;
+}
+.comentario__mensagem--erro {
+  color: var(--color-error);
+}
 
 /* Rodapé do site */
 .rodape-site {
@@ -1161,6 +1194,53 @@ button.acao--ativa .material-symbols-outlined {
   background: var(--color-surface-container);
   border-radius: var(--raio);
   padding: 1px 6px;
+}
+
+/* Moderação de comentários (painel escondido, RNF-10) */
+.moderacao {
+  padding: var(--espaco-lg) var(--margem) var(--espaco-xl);
+  max-width: var(--medida-leitura);
+}
+.moderacao__lista {
+  list-style: none;
+  margin: var(--espaco-lg) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-md);
+}
+.moderacao__item {
+  background: var(--color-surface-container-low);
+  border-radius: var(--raio-lg);
+  padding: var(--espaco-md);
+}
+.moderacao__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--espaco-sm);
+  margin-bottom: var(--espaco-sm);
+}
+.moderacao__corpo {
+  margin: 0 0 var(--espaco-sm);
+}
+.moderacao__acoes {
+  display: flex;
+  gap: var(--espaco-sm);
+}
+.moderacao__acoes button {
+  font-family: var(--fonte-mono);
+  font-size: 13px;
+  padding: var(--espaco-xs) var(--espaco-md);
+  border-radius: var(--raio);
+  border: none;
+  cursor: pointer;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+.moderacao__rejeitar {
+  background: var(--color-surface-container-high);
+  color: var(--color-on-surface);
 }
 
 /* Página estática (ex.: Eu) */
