@@ -9,6 +9,7 @@ import {
   responderCancelamento,
   responderGerenciar,
 } from "./pages/assinar.ts";
+import { responderDisparo } from "./pages/disparo.ts";
 import { renderizarPaginaEu } from "./pages/eu.ts";
 import { renderizarPaginaFolha, responderBaixarMarkdown } from "./pages/folha.ts";
 import { responderRobots, responderRss, responderSitemap } from "./pages/seo.ts";
@@ -31,6 +32,9 @@ const server = Bun.serve({
     "/folha/:slug/baixar.md": (req) => responderBaixarMarkdown(req.params.slug),
     "/folha/:slug/interacao": {
       POST: (req) => responderInteracao(req, req.params.slug),
+    },
+    "/folha/:slug/disparar": {
+      POST: (req) => responderDisparo(req.params.slug),
     },
     "/arquivo": (req) => renderizarPaginaArquivo(new URL(req.url)),
     "/assinar": {

@@ -30,17 +30,16 @@ Isso não é à prova de spam (alguém pode limpar o `localStorage` e clicar de 
 
 `src/public/acoes.js`: compartilhar usa a Web Share API nativa quando existe (mobile, a maioria dos browsers recentes); sem ela, cai pra copiar o link no clipboard com um aviso visual. Baixar abre um menuzinho com duas opções — `.md` é download de verdade do arquivo fonte (`GET /folha/:slug/baixar.md`, com `Content-Disposition: attachment`); "PDF" só aciona `window.print()`, reaproveitando o `@media print` que já existia — sem precisar de uma lib de geração de PDF no servidor só pra isso.
 
-### Controles do leitor (fonte, tamanho, tema) — escopados só à Folha
+### Controles do leitor (fonte, tamanho, tema) — dois escopos diferentes, de propósito
 
-Três preferências, persistidas no `localStorage` do navegador do leitor, mas aplicadas **só dentro da folha que está sendo lida** — nunca no `<html>`/`<body>`. Decisão do Bianco: é uma preferência de leitura daquela folha, não do site inteiro, e não deve vazar pra Arquivo/Assinar/Eu nem pras partes de interação da própria folha (comentário "Las Cartas", a barra de metadados/controles, o rodapé).
+Fonte e tamanho são uma coisa; tema é outra. O Bianco foi bem específico sobre isso depois de ver o primeiro resultado (ia tudo pro `<html>`, vazava pro site inteiro):
 
-Os atributos (`data-fonte`, `data-tamanho`, `data-tema`) vão em **dois elementos**: `.folha__leitura` (título, subtítulo, autoria, corpo, cards finais, navegação entre edições) e `.folha__sidebar` (anotações à margem, seções desta folha) — não num ancestral comum, porque esses dois são irmãos diretos no grid (`.folha__layout`) e um wrapper novo quebraria o layout de 2 colunas. Ficam de fora: a barra "Folha Nº.../controles" e o `.comentario`.
+- **Fonte e tamanho** (`data-fonte`, `data-tamanho`): escopados só à **parte de leitura** da folha — `.folha__leitura` (título, subtítulo, autoria, corpo, cards finais, navegação entre edições) e `.folha__sidebar` (anotações à margem, seções desta folha). Ficam de fora o comentário ("Las Cartas") e a barra de metadados/controles. **Persistidos no `localStorage`** — seguem o leitor de folha em folha.
+  - `data-fonte="serif|mono"` troca só a variável `--fonte-serif` (vira alias pra `--fonte-mono`).
+  - `data-tamanho="normal|grande"` usa `calc(Nrem * var(--escala-texto))` na escala tipográfica, com `--escala-texto: 1` no `:root` e sobrescrito só nesses containers — escalar o `<html>` direto afetaria rem-sizing em qualquer lugar do site. Rótulos/metadados (`label-md`, `label-sm`) ficam em `px`, fora do escalonamento.
+- **Tema** (`data-tema="eggshell|sepia|escuro"`): escopado à **folha inteira** — `<article class="folha">`, então inclui a barra de metadados, a sidebar, o corpo *e* o comentário. Ainda assim nunca o `<html>`/`<body>`, então Arquivo/Assinar/Eu nunca mudam. **Não é persistido** — de propósito: ao trocar de página (mesmo pra outra folha), volta pro padrão. `.folha` precisa de `background`/`color` explícitas, já que a troca não é mais no `<body>` — sem isso nada repintaria. O tom escuro reaproveita os tokens `inverse-on-surface`, `inverse-primary` e `secondary-fixed-dim` que o próprio `DESIGN.md` já tinha pra esse cenário — não são números inventados; só a escada de `surface-container-*` foi derivada manualmente a partir do `#201D1A` do protótipo.
 
-- `data-fonte="serif|mono"` — troca só a variável `--fonte-serif` (vira alias pra `--fonte-mono`) dentro desses containers.
-- `data-tamanho="normal|grande"` — em vez de escalar o `<html>` (que afetaria rem-based sizing em qualquer lugar), a escala tipográfica usa `calc(Nrem * var(--escala-texto))`, com `--escala-texto: 1` no `:root` e sobrescrito só nos containers escopados. Fora deles a variável nunca muda, então nada mais no site é afetado. Rótulos/metadados (`label-md`, `label-sm`) ficam em `px`, fora do escalonamento.
-- `data-tema="eggshell|sepia|escuro"` — troca os tokens de cor por bloco, só nesses containers. Como a troca não é mais no `<body>`, os próprios containers precisam da `background`/`color` explícitas (`.folha__leitura`/`.folha__sidebar { background: var(--color-background); color: var(--color-on-surface); }`) — sem isso nada repintaria. `.folha__leitura` ganha padding + margin negativa do mesmo tamanho, só pra parecer um "caderno dentro da página" com respiro, sem empurrar o texto. O tom escuro reaproveita os tokens `inverse-on-surface`, `inverse-primary` e `secondary-fixed-dim` que o próprio `DESIGN.md` já tinha pra esse cenário — não são números inventados; só a escada de `surface-container-*` foi derivada manualmente a partir do `#201D1A` do protótipo.
-
-Como os elementos-alvo só existem depois que o HTML deles é parseado, o script que lê o `localStorage` e aplica os atributos cedo (pra evitar flash) fica **inline dentro de `src/pages/folha.ts`**, logo depois de `.folha__leitura` fechar — não no `<head>` do layout global (que roda cedo demais, antes desses elementos existirem). `src/public/leitor.js` (esse sim `defer`, carregado em toda página) só liga os cliques e sincroniza qual botão aparece "ativo"; em páginas sem esses elementos (Arquivo, Assinar, Eu) ele não faz nada.
+Como `.folha__leitura`/`.folha__sidebar` só existem depois que o HTML deles é parseado, o script que lê o `localStorage` de fonte/tamanho e aplica cedo (pra evitar flash) fica **inline dentro de `src/pages/folha.ts`**, logo depois de `.folha__leitura` fechar — não no `<head>` do layout global. Tema não precisa desse script: como nunca persiste, toda página já carrega no padrão. `src/public/leitor.js` (esse sim `defer`, carregado em toda página) liga os cliques e sincroniza qual botão aparece "ativo" — com `button[data-X]` na busca, não `[data-X]` sozinho, porque `.folha` também carrega `data-tema` (é o alvo da troca, não um botão) e entraria na lista errado.
 
 ### SEO básico
 
@@ -163,7 +162,15 @@ A partir do **mesmo markdown fonte**, geramos duas versões por edição:
 - **Texto Puro**: plain text, formatado para leitores de e-mail simples / e-ink (ver mockup "Amostra da Caixa de Entrada" na tela Assinar).
 - **Edição Editorial**: HTML usando os tokens do `DESIGN.md` (Newsreader, notas marginais, sépia).
 
-`src/email/render.ts` já tem as duas funções de render (`renderizarAmostraTextoPuro`/`renderizarAmostraEditorial`), usadas hoje só pra preview na tela Assinar — a amostra sempre reflete a folha publicada mais recente de verdade, nunca conteúdo inventado. Falta o template final pra disparo de verdade (RF-18/RF-20), que depende do provedor de e-mail configurado.
+`src/email/render.ts` tem dois pares de função: `renderizarAmostra*` (preview truncado na tela Assinar) e `renderizarEmail*` (conteúdo completo, com o rodapé de gerenciar/cancelar usando o token do próprio assinante — usadas no disparo de verdade).
+
+### Disparo de e-mail (RF-17/RF-18/RF-20) — integrado, nunca testado de verdade
+
+`src/email/provider.ts` fala com a API HTTP do Resend direto via `fetch` (sem SDK — RNF-02), lendo `RESEND_API_KEY`/`RESEND_FROM` do `.env` (Bun carrega sozinho). Sem essas variáveis, `enviarEmail` lança `ConfiguracaoEmailAusente` em vez de falhar silenciosamente.
+
+`POST /folha/:slug/disparar` (`src/pages/disparo.ts`) é o gatilho manual (RN-11: sem frequência fixa, então nunca automático ao publicar) — busca os assinantes `ativo` de cada formato, manda um e-mail por pessoa com o link de gerenciar/cancelar já embutido, e grava o total em `envios` (RF-20). Rota sem autenticação — é uma limitação conhecida, ver RN-11 em REGRAS_DE_NEGOCIO.md.
+
+**Importante**: eu não tenho uma chave de API de verdade, então esse caminho nunca foi testado contra o Resend real — só testei os casos sem chave configurada (erro 503 claro) e sem assinantes (0 enviados, sem crash). Teste de ponta a ponta fica pendente de você configurar `RESEND_API_KEY`/`RESEND_FROM`.
 
 ### O que é banco "de verdade" (não derivado de markdown)
 

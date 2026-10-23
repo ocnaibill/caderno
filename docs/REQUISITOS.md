@@ -32,10 +32,10 @@ Ver [TELAS_E_UX.md](TELAS_E_UX.md) para o mapeamento de cada tela e [REGRAS_DE_N
 
 ### Assinatura e e-mail
 - **RF-16**: Permitir inscrição por e-mail, com escolha de formato (Texto Puro / Edição Editorial). ✅ `POST /assinar`.
-- **RF-17**: Enviar e-mail de confirmação de inscrição (double opt-in, RN-12). ⏸ Pendente de provedor de e-mail configurado — ver RN-12.
-- **RF-18**: Gerar, para cada edição, as duas versões de e-mail (texto puro e HTML editorial) a partir do mesmo markdown fonte. 🔶 A função de render existe (`src/email/render.ts`, usada na amostra da tela Assinar); falta o template final pronto pra envio de verdade.
+- **RF-17**: Enviar e-mail de confirmação de inscrição (double opt-in, RN-12). ⏸ Pendente de provedor de e-mail configurado — ver RN-12 (o envio de edição já funciona via RF-18, só o double opt-in que fica pendente).
+- **RF-18**: Gerar, para cada edição, as duas versões de e-mail (texto puro e HTML editorial) a partir do mesmo markdown fonte. ✅ `src/email/render.ts` + `POST /folha/:slug/disparar` — implementado mas nunca testado contra um envio real (sem chave de API). Ver ARQUITETURA.md.
 - **RF-19**: Permitir que o assinante cancele a inscrição ou troque de formato sem login, via link único. ✅ `GET/POST /assinar/gerenciar?token=` (trocar formato) e `GET /assinar/cancelar?token=` (cancelar).
-- **RF-20**: Registrar histórico de envios por edição (tabela `envios`), para auditoria própria.
+- **RF-20**: Registrar histórico de envios por edição (tabela `envios`), para auditoria própria. ✅
 
 ### RSS e integração
 - **RF-21**: Expor feed RSS/Atom com as folhas publicadas (RN-10). ✅ `GET /rss.xml` (RSS 2.0, últimas 20).
@@ -51,5 +51,6 @@ Ver [TELAS_E_UX.md](TELAS_E_UX.md) para o mapeamento de cada tela e [REGRAS_DE_N
 - **RNF-05 — Performance de leitura**: tempo até o texto ficar legível (sem esperar JS pesado) deve ser baixo — a experiência de leitura não pode depender de hidratação de UI pesada.
 - **RNF-06 — Resiliência a spam**: formulários de comentário e assinatura usam defesas simples (honeypot, moderação manual) já que CAPTCHA está fora de cogitação.
 - **RNF-07 — Disponibilidade**: aceitável rodar em infraestrutura pessoal (homelab) com disponibilidade "best effort" — não é um serviço com SLA, é um projeto pessoal.
+- **RNF-10 — Rotas administrativas protegidas antes do deploy** (novo): `POST /folha/:slug/disparar` (e a futura página de redigir) não têm autenticação nenhuma hoje — são só "escondidas" por não terem link público. Isso é aceitável enquanto o site só roda localmente, mas vira requisito de verdade antes de ir pro homelab (ver preparação de deploy).
 - **RNF-08 — Idioma único**: PT-BR, fuso de Brasília (BRT) — sem requisito de internacionalização.
 - **RNF-09 — Deliverability de e-mail**: uso de provedor terceirizado (Resend/Postmark) com SPF/DKIM configurados corretamente, para não cair em spam.

@@ -52,12 +52,11 @@
   --escala-texto: 1;
 }
 
-/* Controles do leitor (Serif/Mono, Aa/Aa+, tom) — escopados só à Folha
-   (.folha__leitura = título/subtítulo/autoria/corpo; .folha__sidebar =
-   anotações/seções), nunca ao <html>/<body>. De propósito: é uma
-   preferência de leitura daquela folha, não do site inteiro, e não deve
-   vazar pra áreas de UI/interação como o comentário ("Las Cartas") — ver
-   docs/ARQUITETURA.md. */
+/* Fonte (Serif/Mono) e tamanho (Aa/Aa+): escopados só à PARTE DE LEITURA
+   da Folha (.folha__leitura = título/subtítulo/autoria/corpo;
+   .folha__sidebar = anotações/seções) — nunca ao <html>/<body>, e nunca
+   no comentário ("Las Cartas") ou na barra de metadados/controles.
+   Persistidos no localStorage: seguem o leitor de folha em folha. */
 .folha__leitura[data-fonte="mono"],
 .folha__sidebar[data-fonte="mono"] {
   --fonte-serif: var(--fonte-mono);
@@ -68,10 +67,13 @@
   --escala-texto: 1.125;
 }
 
-/* Tom "Sépia" — mesmo esquema claro, só com fundo mais quente
-   (valores literais do protótipo: #F3ECE1). */
-.folha__leitura[data-tema="sepia"],
-.folha__sidebar[data-tema="sepia"] {
+/* Tom (claro/sépia/escuro): escopado à Folha INTEIRA — <article class="folha">,
+   então inclui a barra de metadados, a sidebar, o corpo e o comentário
+   ("Las Cartas" também muda). Ainda assim não é o <html>/<body>, então
+   Arquivo/Assinar/Eu nunca são afetados. De propósito, NÃO é persistido
+   no localStorage — ao trocar de página (mesmo pra outra folha), volta
+   pro padrão; é um estado só daquela visita àquela página, por enquanto. */
+.folha[data-tema="sepia"] {
   --color-surface: #f3ece1;
   --color-background: #f3ece1;
   --color-surface-container-low: #ece3d4;
@@ -88,8 +90,7 @@
    destacar em fundo escuro) — não são números inventados. O resto da
    escada de superfícies foi derivado a partir do #201D1A do protótipo.
    Ver docs/ARQUITETURA.md. */
-.folha__leitura[data-tema="escuro"],
-.folha__sidebar[data-tema="escuro"] {
+.folha[data-tema="escuro"] {
   --color-surface: #201d1a;
   --color-background: #201d1a;
   --color-surface-container-lowest: #171512;
@@ -108,21 +109,12 @@
   --color-selecao: #4b443b;
 }
 
-/* O container escopado precisa da própria cor de fundo/texto — como a
-   troca de tema não é mais no <html>/<body>, nada repinta sozinho. */
-.folha__leitura,
-.folha__sidebar {
+/* A Folha precisa da própria cor de fundo/texto — como a troca de tema
+   não é mais no <body>, nada repinta sozinho sem isso. */
+.folha {
   background: var(--color-background);
   color: var(--color-on-surface);
   transition: background-color 0.15s ease, color 0.15s ease;
-}
-.folha__leitura {
-  padding: var(--espaco-lg);
-  margin: calc(var(--espaco-lg) * -1);
-  border-radius: var(--raio-xl);
-}
-.folha__sidebar {
-  border-radius: var(--raio-xl);
 }
 
 * {

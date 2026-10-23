@@ -322,3 +322,46 @@ export function cancelarAssinante(token: string): boolean {
   const linha = db.query("UPDATE assinantes SET status = 'cancelado', cancelado_em = datetime('now') WHERE token_gerenciamento = ? AND status != 'cancelado'").run(token);
   return linha.changes > 0;
 }
+
+export interface AssinanteAtivo {
+  email: string;
+  token_gerenciamento: string;
+}
+
+export function buscarAssinantesAtivos(formato: FormatoEmail): AssinanteAtivo[] {
+  const db = getDb();
+  return db
+    .query<AssinanteAtivo, [string]>(
+      "SELECT email, token_gerenciamento FROM assinantes WHERE status = 'ativo' AND formato_preferido = ?",
+    )
+    .all(formato);
+}
+
+/** RF-20: histórico de envios por edição, pra auditoria própria. */
+export function registrarEnvio(slug: string, formato: FormatoEmail, totalDestinatarios: number): void {
+  const db = getDb();
+  const post = db.query<{ id: number }, [string]>("SELECT id FROM posts WHERE slug = ?").get(slug);
+  if (!post) return;
+  db.query(
+    "INSERT INTO envios (post_id, formato, total_destinatarios) VALUES (?, ?, ?)",
+  ).run(post.id, formato, totalDestinatarios);
+}
+
+export interface EnvioRegistrado {
+  formato: FormatoEmail;
+  total_destinatarios: number;
+  enviado_em: string;
+}
+
+export function buscarEnviosDaFolha(slug: string): EnvioRegistrado[] {
+  const db = getDb();
+  return db
+    .query<EnvioRegistrado, [string]>(
+      `SELECT e.formato, e.total_destinatarios, e.enviado_em
+       FROM envios e
+       JOIN posts p ON p.id = e.post_id
+       WHERE p.slug = ?
+       ORDER BY e.enviado_em DESC`,
+    )
+    .all(slug);
+}

@@ -139,9 +139,9 @@ export function renderizarPaginaFolha(slug: string): Response {
     </form>
   </section>`;
 
-  const corpoPagina = `<article class="folha">
+  const corpoPagina = `<article class="folha" data-tema="eggshell">
     <div class="folha__layout">
-      <aside class="folha__sidebar" data-fonte="serif" data-tamanho="normal" data-tema="eggshell">
+      <aside class="folha__sidebar" data-fonte="serif" data-tamanho="normal">
         ${htmlPensamentos}
         ${htmlSecoes}
       </aside>
@@ -159,7 +159,7 @@ export function renderizarPaginaFolha(slug: string): Response {
           ${renderizarControlesLeitor()}
         </div>
 
-        <div class="folha__leitura" data-fonte="serif" data-tamanho="normal" data-tema="eggshell">
+        <div class="folha__leitura" data-fonte="serif" data-tamanho="normal">
         <h1 class="display-lg">${escapeHtml(frontmatter.titulo)}</h1>
         ${frontmatter.subtitulo ? `<p class="folha__subtitulo quote-lg">${escapeHtml(frontmatter.subtitulo)}</p>` : ""}
 
@@ -197,11 +197,13 @@ export function renderizarPaginaFolha(slug: string): Response {
         </div>
         <script>
           (function () {
+            // Só fonte/tamanho são persistidos (seguem o leitor de folha em
+            // folha); tema é de propósito só desta visita, sem localStorage.
             try {
               var alvos = [".folha__leitura", ".folha__sidebar"]
                 .map(function (s) { return document.querySelector(s); })
                 .filter(Boolean);
-              ["fonte", "tamanho", "tema"].forEach(function (grupo) {
+              ["fonte", "tamanho"].forEach(function (grupo) {
                 var valor = localStorage.getItem("caderno:" + grupo);
                 if (!valor) return;
                 alvos.forEach(function (el) { el.setAttribute("data-" + grupo, valor); });

@@ -1,13 +1,15 @@
-// Amostras de como uma edição chegaria no e-mail do assinante — usadas só
-// como preview na tela Assinar por enquanto. O envio de verdade (RF-16 a
-// RF-20) depende de um provedor (Resend/Postmark) ainda não configurado.
+// Amostras (preview na tela Assinar, truncadas) e e-mails completos (envio
+// de verdade, ver src/email/provider.ts) — ambos a partir do mesmo
+// markdown fonte, como ARQUITETURA.md descreve.
 
+import { site } from "../config.ts";
 import { escapeHtml } from "../render/html.ts";
 import { renderizarCorpo } from "../render/markdown.ts";
 import type { Folha } from "../content/types.ts";
 
 function paraTextoPuro(corpo: string): string {
   return corpo
+    .replace(/\s*\{oculto\}\s*$/gm, "") // marcador de seção sem título visível (RF-02)
     .replace(/^#{1,6}\s+/gm, "")
     .replace(/\*\*(.*?)\*\*/g, "$1")
     .replace(/\*(.*?)\*/g, "$1")
@@ -56,4 +58,71 @@ export function renderizarAmostraEditorial(folha: Folha, numero: number): string
     ${frontmatter.subtitulo ? `<p class="amostra-editorial__subtitulo">${escapeHtml(frontmatter.subtitulo)}</p>` : ""}
     <div class="amostra-editorial__corpo">${trecho}</div>
   </div>`;
+}
+
+export interface AssinanteParaEmail {
+  email: string;
+  tokenGerenciamento: string;
+}
+
+function rodapeTextoPuro(folha: Folha, assinante: AssinanteParaEmail): string {
+  const linkGerenciar = `${site.url}/assinar/gerenciar?token=${assinante.tokenGerenciamento}`;
+  const linkCancelar = `${site.url}/assinar/cancelar?token=${assinante.tokenGerenciamento}`;
+  return [
+    "---",
+    "",
+    `Para ler esta reflexão no navegador: ${site.url}/folha/${folha.slug}`,
+    `Trocar formato ou preferências: ${linkGerenciar}`,
+    `Cancelar a qualquer momento: ${linkCancelar}`,
+  ].join("\n");
+}
+
+/** E-mail completo, formato Texto Puro — usado no disparo de verdade (RF-18/RF-20). */
+export function renderizarEmailTextoPuro(
+  folha: Folha,
+  numero: number,
+  assinante: AssinanteParaEmail,
+): string {
+  const { frontmatter, corpo } = folha;
+  const divisoria = "=".repeat(52);
+  const corpoCompleto = paraTextoPuro(corpo);
+
+  return [
+    divisoria,
+    `CADERNO PESSOAL // EDIÇÃO Nº ${numero}`,
+    divisoria,
+    "",
+    frontmatter.subtitulo ?? "",
+    "",
+    corpoCompleto,
+    "",
+    rodapeTextoPuro(folha, assinante),
+  ]
+    .filter((linha) => linha !== "")
+    .join("\n");
+}
+
+/** E-mail completo, formato Edição Editorial — usado no disparo de verdade (RF-18/RF-20). */
+export function renderizarEmailHtml(folha: Folha, numero: number, assinante: AssinanteParaEmail): string {
+  const { frontmatter, corpo } = folha;
+  const { html } = renderizarCorpo(corpo);
+  const linkGerenciar = `${site.url}/assinar/gerenciar?token=${assinante.tokenGerenciamento}`;
+  const linkCancelar = `${site.url}/assinar/cancelar?token=${assinante.tokenGerenciamento}`;
+
+  return `<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8" /></head>
+<body style="background:#fcf9f3;color:#1c1c18;font-family:Georgia,serif;padding:24px;">
+  <p style="font-family:monospace;font-size:12px;color:#755940;">EDIÇÃO Nº ${numero}</p>
+  <h1 style="font-weight:400;">${escapeHtml(frontmatter.titulo)}</h1>
+  ${frontmatter.subtitulo ? `<p style="font-style:italic;color:#4d4540;">${escapeHtml(frontmatter.subtitulo)}</p>` : ""}
+  <div>${html}</div>
+  <hr style="border:none;border-top:1px solid #ebe8e2;margin:32px 0;" />
+  <p style="font-size:12px;color:#7e756f;">
+    <a href="${escapeHtml(`${site.url}/folha/${folha.slug}`)}">Ler no navegador</a> ·
+    <a href="${escapeHtml(linkGerenciar)}">Trocar preferências</a> ·
+    <a href="${escapeHtml(linkCancelar)}">Cancelar assinatura</a>
+  </p>
+</body>
+</html>`;
 }
