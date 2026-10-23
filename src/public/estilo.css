@@ -669,8 +669,11 @@ button.acao--ativa .material-symbols-outlined {
 .prose video,
 .prose embed,
 .prose object {
+  display: block;
   max-width: 100%;
   height: auto;
+  margin-left: auto;
+  margin-right: auto;
 }
 .prose figure img {
   border-radius: 0;
