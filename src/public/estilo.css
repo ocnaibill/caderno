@@ -901,14 +901,18 @@ button.acao--ativa .material-symbols-outlined {
 }
 @media (min-width: 900px) {
   .rodape-site__grade {
-    grid-template-columns: repeat(3, 1fr);
+    /* Proporção exata do Figma (frame 3:2438): colunas de 507/400/293px
+       com 28px de gap — não são 1fr iguais, por isso usar fr nessa razão
+       em vez de repeat(3, 1fr), que estica tudo igual e abre buracos. */
+    grid-template-columns: 507fr 400fr 293fr;
+    gap: var(--espaco-lg);
   }
 }
 .rodape-site h3 {
   font-family: var(--fonte-serif);
   font-size: 22px;
   color: var(--color-on-surface);
-  margin-bottom: var(--espaco-xs);
+  margin-bottom: var(--espaco-sm);
 }
 .rodape-site h4 {
   font-family: var(--fonte-mono);
@@ -916,13 +920,14 @@ button.acao--ativa .material-symbols-outlined {
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--color-secondary);
-  margin-bottom: var(--espaco-xs);
+  margin-bottom: var(--espaco-sm);
 }
 .rodape-site__descricao {
   color: var(--color-on-surface-variant);
+  max-width: 24rem;
 }
 .rodape-site__divisor {
-  margin-top: var(--espaco-xl);
+  margin-top: 5rem;
   border-top: 1px solid var(--color-surface-container-high);
 }
 .rodape-site__assinatura {
@@ -931,7 +936,7 @@ button.acao--ativa .material-symbols-outlined {
 .rodape-site__perfil {
   display: inline-flex;
   align-items: center;
-  gap: var(--espaco-xs);
+  gap: 6px;
   font-family: var(--fonte-mono);
   font-weight: 400;
   font-size: 13px;
