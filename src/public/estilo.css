@@ -1529,6 +1529,7 @@ button.acao--ativa .material-symbols-outlined {
 }
 .pagina__leitura {
   max-width: var(--medida-leitura);
+  margin: 0 auto;
 }
 
 /* Assinar */
