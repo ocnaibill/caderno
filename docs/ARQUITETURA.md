@@ -8,7 +8,8 @@ Decisões de stack e de pipeline de conteúdo, fechadas em conversa com o Bianco
 - **Persistência**: `bun:sqlite` — zero dependência externa, já vem com o Bun.
 - **Conteúdo (as "folhas")**: Markdown em arquivos no próprio repo, versionado no git.
 - **Envio de e-mail**: provedor terceirizado (Resend ou Postmark — a decidir qual na implementação; ambos têm free tier que cobre bem um público pequeno).
-- **Parser Markdown**: qualquer lib com suporte a HTML cru habilitado (ex. `marked`, `markdown-it`) — permite embeds (YouTube, tweets, etc.) direto no `.md`, sem inventar sintaxe própria, porque o autor é único e confiável.
+- **Parser Markdown**: `marked`, com HTML cru habilitado (comportamento padrão da lib) — permite embeds (YouTube, tweets, etc.) direto no `.md`, sem inventar sintaxe própria, porque o autor é único e confiável.
+- **Cores/tipografia/espaçamento**: variáveis CSS com os **mesmos nomes dos tokens do `DESIGN.md`** (`--color-surface-container-low`, `--color-on-surface-variant` etc.), valor idêntico ao hex do frontmatter de lá. Nunca aproximar visualmente "de cabeça" — o nome do token já diz qual cor literal usar.
 
 ### Por que não React (decisão debatida e fechada em 22/10/2026)
 
@@ -71,6 +72,7 @@ numero: 42
 titulo: "As vozes da minha cabeça precisavam de um local..."
 subtitulo: "Gostei da ideia de ter algum lugar para anotar tudo que penso..."
 data: 2024-10-12
+hora: "06:14"            # opcional — vira "Escrito às 06:14" na autoria
 categoria: desenvolvimento-ideias-hobby
 tags: [bun, figma, newsletter]
 resumo: "Sobre decidir construir isso do zero..."
@@ -82,7 +84,23 @@ permite_comentarios: true
 
 - `subtitulo` é a linha em itálico exibida logo abaixo do H1, na própria página da folha (confirmado no Figma — havia um nó de texto dedicado para isso, que eu tinha deixado passar na primeira leitura).
 - `resumo` é usado só como excerpt no Arquivo, meta description (og:description) e corpo do item no RSS — não aparece na página da folha.
+- `hora` é opcional; sem ela, a autoria só mostra localização e tempo de leitura, sem "Escrito às...".
 - Páginas estáticas (`content/paginas/*.md`) não entram no índice/Arquivo — são renderizadas direto, sem frontmatter de catalogação.
+
+### Convenções dentro do corpo (markdown)
+
+Além do markdown padrão, o corpo de uma folha aceita:
+
+- **Seção sem título visível**: `## Texto da seção {oculto}` — entra no índice "Seções desta folha" normalmente, mas o `<h2>` não aparece no corpo (fica só como âncora, visível a leitores de tela). Útil pra estruturar sem forçar um heading toda vez.
+- **Legenda de imagem**: `![alt](caminho.jpg "Texto da legenda")` — o `title` da imagem (sintaxe markdown padrão) vira uma `<figcaption>` centralizada abaixo dela.
+- **Caixa de nota**: HTML cru — `<aside class="nota">texto</aside>` ou, em itálico, `<aside class="nota nota--italico">texto</aside>`.
+- **Lista com título + corpo**: item com um parágrafo em negrito (vira o "título", cor `primary`) seguido de um parágrafo em branco (vira o "corpo", cor `on-surface-variant`):
+  ```markdown
+  1. **Título do item**
+
+     Corpo do item, pode ter mais de uma frase.
+  ```
+  Precisa da linha em branco entre título e corpo pra virarem parágrafos separados — sem ela, o markdown funde tudo numa linha só.
 
 ### Reindexação
 
@@ -96,19 +114,21 @@ Tempo de leitura é **calculado on-the-fly** a partir da contagem de palavras do
 
 Tabela virtual **FTS5** (`bun:sqlite` já suporta nativamente) sobre `titulo`, `resumo` e corpo, populada/atualizada no mesmo passo de reindex. Cobre a caixa "Buscar por termo ou ideia" do Arquivo sem precisar de serviço externo.
 
-### Cards finais (recomendação/rodapé da folha)
+### Cards finais ("Glosas Marginais & Livros Citados")
 
-Os cards do tipo "Leitura Recomendada" / "Instrumento Usual" no rodapé de uma folha são **totalmente livres**: título custom (não é sempre "Leitura Recomendada"), quantidade variável (0, 1, 2, 3+ por folha). Modelado como lista no frontmatter:
+A seção de recomendação no rodapé de uma folha tem um título de seção fixo ("Glosas Marginais & Livros Citados"), mas cada card dentro dela é **totalmente livre** e em quantidade variável (0, 1, 2, 3+ por folha). Cada card tem 3 campos — `tipo` (o que aparece em "Ref. 01 — {tipo}"), `nome` (o item recomendado em si) e `corpo` (a descrição):
 
 ```yaml
 cards_finais:
-  - titulo: "Leitura Recomendada"
-    corpo: "Elogio da Sombra, de Jun'ichirō Tanizaki."
-  - titulo: "Instrumento Usual"
-    corpo: "Tinta Ferrográfica."
+  - tipo: "Leitura Recomendada"
+    nome: "Elogio da Sombra"
+    corpo: "Jun'ichirō Tanizaki. Ensaio sobre a estética japonesa da penumbra."
+  - tipo: "Instrumento Usual"
+    nome: "Tinta Ferrogálica"
+    corpo: "Composto tradicional de sais de ferro, escurece na folha com o tempo."
 ```
 
-O layout é responsivo à quantidade (CSS Grid com `auto-fit`/`minmax`): 1 card ocupa a largura toda, 2 ficam lado a lado, 3+ quebram linha — sem precisar de lógica condicional no template, só CSS.
+O número do "Ref. NN" é gerado pela posição no array, não guardado no frontmatter. O layout é responsivo à quantidade (CSS Grid com `auto-fit`/`minmax`): 1 card ocupa a largura toda, 2 ficam lado a lado, 3+ quebram linha — sem precisar de lógica condicional no template, só CSS.
 
 ### Dois formatos de e-mail
 

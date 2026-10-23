@@ -12,7 +12,7 @@ Numeração `RN-nn`, decisões não se reabrem sem necessidade real de mudar. Re
 
 ## Comentários
 
-- **RN-04**: Se `identidade_oculta` estiver marcada, o nome não é exibido publicamente — mas e-mail/nome continuam retidos internamente (nunca expostos) para moderação e contato em caso de resposta. **(proposta, confirmar)**
+- **RN-04**: Comentário é sempre tratado como anônimo publicamente (sem indexação, sem exigir conta) — não existe toggle de "esconder identidade". `nome` é um campo livre opcional só pra assinar o recado; em branco, aparece como "Anônimo". `email` nunca é exibido, só retido internamente para eventual contato.
 - **RN-05**: Comentário entra como `pendente` e só fica público após aprovação manual do autor. Sem CAPTCHA (não é algo que eu consiga implementar) — a defesa contra spam é moderação manual + campo honeypot invisível no formulário.
 
 ## Assinatura e e-mail

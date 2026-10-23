@@ -15,6 +15,24 @@ function linkNav(href: string, label: string, ativo: boolean): string {
   return `<a${classe} href="${href}">${label}</a>`;
 }
 
+function formatarDataHoraAtual(): string {
+  const agora = new Date();
+  const fusoHorario = "America/Sao_Paulo";
+  const data = new Intl.DateTimeFormat("pt-BR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: fusoHorario,
+  }).format(agora);
+  const hora = new Intl.DateTimeFormat("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: fusoHorario,
+  }).format(agora);
+  return `${data} — ${hora.replace(":", "h")} BRT`;
+}
+
 export function layout({ titulo, descricao, corpo, ativo }: LayoutOpts): string {
   return `<!doctype html>
 <html lang="pt-BR">
@@ -26,11 +44,15 @@ export function layout({ titulo, descricao, corpo, ativo }: LayoutOpts): string 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <link rel="stylesheet" href="/public/estilo.css" />
 </head>
 <body>
   <header class="masthead">
-    <a class="masthead__titulo" href="/">${site.nome}</a>
+    <div class="masthead__identidade">
+      <a class="masthead__titulo" href="/">${site.nome}</a>
+      <span class="masthead__datahora label-sm">${formatarDataHoraAtual()}</span>
+    </div>
     <nav class="masthead__nav">
       ${linkNav("/", "Folha de Hoje", ativo === "folha")}
       ${linkNav("/arquivo", "Arquivo", ativo === "arquivo")}

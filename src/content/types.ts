@@ -1,5 +1,6 @@
 export interface CardFinal {
-  titulo: string;
+  tipo: string;
+  nome: string;
   corpo: string;
 }
 
@@ -8,6 +9,7 @@ export interface FolhaFrontmatter {
   titulo: string;
   subtitulo?: string;
   data: string;
+  hora?: string;
   categoria?: string;
   tags?: string[];
   resumo?: string;

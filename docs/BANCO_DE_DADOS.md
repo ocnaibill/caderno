@@ -58,9 +58,8 @@ Indexa `titulo`, `resumo` e corpo extraído do markdown. Repopulada a cada reind
 |---|---|---|
 | `id` | INTEGER PK | |
 | `post_id` | FK → `posts.id` | |
-| `nome` | TEXT, nullable | Nulo se `identidade_oculta` |
+| `nome` | TEXT, nullable | Campo livre opcional; em branco, exibido como "Anônimo" |
 | `email` | TEXT, nullable | Nunca exibido publicamente; só para notificação opcional de resposta |
-| `identidade_oculta` | BOOLEAN | |
 | `corpo` | TEXT | |
 | `status` | TEXT | `pendente` \| `aprovado` \| `rejeitado` (RN-05) |
 | `ip_hash` | TEXT, nullable | Hash, não o IP cru — só para rate limiting/anti-spam |

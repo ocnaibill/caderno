@@ -48,12 +48,14 @@ CREATE TABLE IF NOT EXISTS pensamentos (
 
 -- Dados de runtime (não derivados de arquivo — ver docs/ARQUITETURA.md).
 
+-- Comentário é sempre tratado como anônimo publicamente (não indexado, sem
+-- exigir conta) — "nome" é só um campo livre opcional que o leitor pode
+-- preencher; em branco, aparece como "Anônimo" (RN-04).
 CREATE TABLE IF NOT EXISTS comentarios (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
   nome TEXT,
   email TEXT,
-  identidade_oculta INTEGER NOT NULL DEFAULT 0,
   corpo TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'pendente' CHECK (status IN ('pendente', 'aprovado', 'rejeitado')),
   ip_hash TEXT,

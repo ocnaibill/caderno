@@ -2,13 +2,13 @@
 
 Leitura das 3 telas desenhadas no Figma ([link](https://www.figma.com/design/PqIYoRq0vhXO6RHb87Bmft/Caderno)), em 22/10/2026. Serve de referência entre o design e os [requisitos](REQUISITOS.md)/[regras de negócio](REGRAS_DE_NEGOCIO.md).
 
-Navegação comum ao topo em todas as telas: `Folha de Hoje` · `Arquivo` · `Eu` · `Assinar`.
+Navegação comum ao topo em todas as telas: `Folha de Hoje` · `Arquivo` · `Eu` · `Assinar`, com a data/hora atual (ex. "24 de novembro de 2026 — 16h45 BRT") logo abaixo do nome do site no masthead.
 
 ## 1. Folha (leitura de uma edição)
 
 A tela principal — onde se lê uma folha publicada.
 
-- **Barra de metadados**: `Folha Nº 42 — Domingo, 12 de Outubro — [categoria]`.
+- **Barra de metadados** (ao lado da sidebar, não acima dela): `FOLHA Nº 42 — DOMINGO, 12 DE OUTUBRO` em mono maiúsculo, mais a categoria como uma tag clicável (ex. `DESENVOLVIMENTO/IDEIAS/HOBBY`, formatada como caminho de diretório) que leva ao Arquivo filtrado por aquela categoria.
 - **Controles do leitor** (topo direito): alternância Serif/Mono (tipografia), Aa/Aa+ (tamanho de texto), claro/escuro (atmosfera de cor), imprimir.
 - **Sidebar esquerda** (sticky):
   - *Anotações à margem*: zero, uma ou várias por folha — cada uma com numeração própria e **global** (o contador de "Pensamentos #N" não é o mesmo do número da folha).
@@ -17,7 +17,7 @@ A tela principal — onde se lê uma folha publicada.
 - **Corpo**: parágrafos, imagem com legenda, *pull quote* (citação em destaque saindo da coluna), caixa de "nota textual" destacada, listas numeradas estilo inventário (`01`, `02`...), fecho em itálico.
 - **Rodapé da folha**:
   - Cards de recomendação com título e conteúdo **totalmente livres**, em quantidade variável (0 a N por folha) — layout responsivo à quantidade.
-  - Caixa de comentário: texto livre + nome/e-mail + checkbox de identidade oculta + botão "Enviar ao Diário".
+  - Caixa de comentário ("Vem, dê pitaco."): nome opcional + texto livre + botão "Enviar ao Diário" — sempre tratado como anônimo publicamente, sem checkbox de identidade.
   - Navegação entre edições: link para a folha anterior e para o Arquivo completo.
 - **Rodapé do site** (comum a todas as telas): bio curta, formulário de assinatura por e-mail, links de colofão (RSS, outros trabalhos, acessibilidade), handle social.
 
