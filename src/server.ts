@@ -58,6 +58,9 @@ const server = Bun.serve({
     "/public/acoes.js": new Response(Bun.file("src/public/acoes.js"), {
       headers: { "Content-Type": "text/javascript; charset=utf-8" },
     }),
+    "/public/leitor.js": new Response(Bun.file("src/public/leitor.js"), {
+      headers: { "Content-Type": "text/javascript; charset=utf-8" },
+    }),
   },
   fetch() {
     return new Response("Não encontrado", { status: 404 });

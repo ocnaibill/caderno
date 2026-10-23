@@ -20,17 +20,17 @@ function formatarData(dataIso: string): string {
 function renderizarControlesLeitor(): string {
   return `<div class="controles-leitor" aria-label="Preferências de leitura">
     <div class="controle-grupo">
-      <button type="button" class="controle-btn controle-btn--ativo" data-acao="fonte-serif">Serif</button>
-      <button type="button" class="controle-btn" data-acao="fonte-mono">Mono</button>
+      <button type="button" class="controle-btn" data-fonte="serif">Serif</button>
+      <button type="button" class="controle-btn" data-fonte="mono">Mono</button>
     </div>
     <div class="controle-grupo">
-      <button type="button" class="controle-btn controle-btn--ativo" data-acao="texto-normal">Aa</button>
-      <button type="button" class="controle-btn" data-acao="texto-grande">Aa+</button>
+      <button type="button" class="controle-btn" data-tamanho="normal">Aa</button>
+      <button type="button" class="controle-btn" data-tamanho="grande">Aa+</button>
     </div>
     <div class="controle-grupo controle-grupo--tons">
-      <button type="button" class="controle-tom controle-tom--ativo" style="background:#FCF9F3" data-acao="tom-eggshell" aria-label="Tom papel"><span class="controle-tom__ponto"></span></button>
-      <button type="button" class="controle-tom" style="background:#F3ECE1" data-acao="tom-sepia" aria-label="Tom sépia"></button>
-      <button type="button" class="controle-tom" style="background:#201D1A" data-acao="tom-noturno" aria-label="Tom noturno"></button>
+      <button type="button" class="controle-tom" style="background:#FCF9F3" data-tema="eggshell" aria-label="Tom papel"><span class="controle-tom__ponto"></span></button>
+      <button type="button" class="controle-tom" style="background:#F3ECE1" data-tema="sepia" aria-label="Tom sépia"><span class="controle-tom__ponto"></span></button>
+      <button type="button" class="controle-tom" style="background:#201D1A" data-tema="escuro" aria-label="Tom noturno"><span class="controle-tom__ponto"></span></button>
     </div>
     <button type="button" class="controle-icone" onclick="window.print()" aria-label="Imprimir">
       <span class="material-symbols-outlined">print</span>

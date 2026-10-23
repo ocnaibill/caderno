@@ -47,8 +47,59 @@
   --sombra-seca: 0 2px 0 0 var(--color-surface-container-high);
 }
 
+/* Fonte (Serif/Mono): troca só a variável, então tudo que usa
+   var(--fonte-serif) — título, corpo, headlines — acompanha. */
+html[data-fonte="mono"] {
+  --fonte-serif: var(--fonte-mono);
+}
+
+/* Tom "Sépia" — mesmo esquema claro, só com fundo mais quente
+   (valores literais do protótipo: #F3ECE1). */
+html[data-tema="sepia"] {
+  --color-surface: #f3ece1;
+  --color-background: #f3ece1;
+  --color-surface-container-low: #ece3d4;
+  --color-surface-container: #e6dcc9;
+  --color-surface-container-high: #ded2bc;
+  --color-surface-container-highest: #d4c6ab;
+  --color-selecao: #e6dcc9;
+}
+
+/* Tom "Noturno" — escuro de verdade. Reaproveita os tokens "inverse-*" e
+   "*-fixed-dim" que o próprio DESIGN.md já definia pra esse exato cenário
+   (inverse-on-surface/inverse-primary descrevem como texto/primary ficam
+   sobre uma superfície invertida; secondary-fixed-dim é o par pensado pra
+   destacar em fundo escuro) — não são números inventados. O resto da
+   escada de superfícies foi derivado a partir do #201D1A do protótipo.
+   Ver docs/ARQUITETURA.md. */
+html[data-tema="escuro"] {
+  --color-surface: #201d1a;
+  --color-background: #201d1a;
+  --color-surface-container-lowest: #171512;
+  --color-surface-container-low: #28241f;
+  --color-surface-container: #2c2822;
+  --color-surface-container-high: #373129;
+  --color-surface-container-highest: #423b32;
+  --color-on-surface: #f3f0ea; /* DESIGN.md: inverse-on-surface */
+  --color-on-surface-variant: #cbc0b4;
+  --color-outline: #948b80;
+  --color-outline-variant: #4b443b;
+  --color-primary: #cdc5c0; /* DESIGN.md: inverse-primary */
+  --color-on-primary: #2d2926; /* DESIGN.md: primary-container */
+  --color-secondary: #e5bfa1; /* DESIGN.md: secondary-fixed-dim */
+  --color-error: #ffb4ab;
+  --color-selecao: #4b443b;
+}
+
 * {
   box-sizing: border-box;
+}
+
+html {
+  font-size: 100%; /* 16px — base do rem. Aa+ (data-tamanho="grande") escala isso. */
+}
+html[data-tamanho="grande"] {
+  font-size: 112.5%; /* ~18px */
 }
 
 body {
@@ -56,7 +107,7 @@ body {
   background: var(--color-background);
   color: var(--color-on-surface);
   font-family: var(--fonte-serif);
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1.6;
 }
 
@@ -100,54 +151,57 @@ img {
   white-space: nowrap;
 }
 
-/* Escala tipográfica (ver DESIGN.md > typography) */
+/* Escala tipográfica (ver DESIGN.md > typography) — em rem de propósito:
+   é o que deixa o Aa+ (html[data-tamanho="grande"]) escalar a leitura
+   inteira só mudando o font-size do <html>. Rótulos/metadados (label-md,
+   label-sm) ficam em px, de fora do escalonamento. */
 .display-lg {
   font-weight: 400;
-  font-size: 34px;
-  line-height: 42px;
+  font-size: 2.125rem;
+  line-height: 2.625rem;
   letter-spacing: -0.01em;
   margin: 0;
 }
 @media (min-width: 900px) {
   .display-lg {
-    font-size: 48px;
-    line-height: 56px;
+    font-size: 3rem;
+    line-height: 3.5rem;
     letter-spacing: -0.02em;
   }
 }
 .headline-lg {
   font-weight: 400;
-  font-size: 32px;
-  line-height: 40px;
+  font-size: 2rem;
+  line-height: 2.5rem;
   letter-spacing: -0.015em;
   margin: 0;
 }
 .headline-md {
   font-weight: 400;
-  font-size: 26px;
-  line-height: 34px;
+  font-size: 1.625rem;
+  line-height: 2.125rem;
   letter-spacing: -0.01em;
   margin: 0;
 }
 .headline-sm {
   font-weight: 500;
-  font-size: 21px;
-  line-height: 28px;
+  font-size: 1.3125rem;
+  line-height: 1.75rem;
   margin: 0;
 }
 .body-lg {
-  font-size: 20px;
-  line-height: 34px;
+  font-size: 1.25rem;
+  line-height: 2.125rem;
   letter-spacing: 0.005em;
 }
 .body-sm {
-  font-size: 15px;
-  line-height: 24px;
+  font-size: 0.9375rem;
+  line-height: 1.5rem;
 }
 .quote-lg {
   font-style: italic;
-  font-size: 22px;
-  line-height: 32px;
+  font-size: 1.375rem;
+  line-height: 2rem;
   letter-spacing: -0.005em;
   color: var(--color-on-surface-variant);
 }
@@ -380,6 +434,9 @@ main {
   border-radius: var(--raio-full);
   background: var(--color-secondary);
   opacity: 0.7;
+  display: none;
+}
+.controle-tom--ativo .controle-tom__ponto {
   display: block;
 }
 .controle-icone {
@@ -509,6 +566,9 @@ button.acao--ativa .material-symbols-outlined {
   flex-direction: column;
   min-width: 160px;
   z-index: 10;
+}
+.acao-menu__lista[hidden] {
+  display: none;
 }
 .acao-menu__lista a,
 .acao-menu__lista button {

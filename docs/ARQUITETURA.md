@@ -30,6 +30,16 @@ Isso não é à prova de spam (alguém pode limpar o `localStorage` e clicar de 
 
 `src/public/acoes.js`: compartilhar usa a Web Share API nativa quando existe (mobile, a maioria dos browsers recentes); sem ela, cai pra copiar o link no clipboard com um aviso visual. Baixar abre um menuzinho com duas opções — `.md` é download de verdade do arquivo fonte (`GET /folha/:slug/baixar.md`, com `Content-Disposition: attachment`); "PDF" só aciona `window.print()`, reaproveitando o `@media print` que já existia — sem precisar de uma lib de geração de PDF no servidor só pra isso.
 
+### Controles do leitor (fonte, tamanho, tema)
+
+Três preferências, cada uma independente, persistidas no `localStorage` do navegador do leitor e aplicadas via atributos no `<html>`:
+
+- `data-fonte="serif|mono"` — troca só a variável `--fonte-serif` (vira um alias pra `--fonte-mono`), então título/corpo/headlines acompanham automaticamente sem precisar repetir a troca em cada seletor.
+- `data-tamanho="normal|grande"` — a escala tipográfica inteira (display/headline/body/quote) foi convertida de `px` pra `rem` de propósito; `html[data-tamanho="grande"] { font-size: 112.5%; }` escala tudo de uma vez. Rótulos/metadados (`label-md`, `label-sm`) ficam em `px`, fora do escalonamento — não fazia sentido aumentar timestamp e tag junto com o texto de leitura.
+- `data-tema="eggshell|sepia|escuro"` — troca os tokens de cor (`--color-surface`, `--color-on-surface` etc.) por bloco. O tom escuro reaproveita os tokens `inverse-on-surface`, `inverse-primary` e `secondary-fixed-dim` que o próprio `DESIGN.md` já tinha para esse cenário — não são números inventados; só a escada de `surface-container-*` foi derivada manualmente a partir do `#201D1A` do protótipo, já que o DESIGN.md não trouxe o esquema escuro completo (só o claro).
+
+Pra evitar flash do tema errado ao carregar a página, um `<script>` síncrono (não `defer`) logo no `<head>` lê o `localStorage` e já aplica os atributos antes do CSS pintar qualquer coisa. `src/public/leitor.js` (esse sim `defer`) só liga os cliques e sincroniza qual botão de cada grupo aparece "ativo" — a lógica dos 3 grupos é genérica (mesma função pra fonte/tamanho/tema, só muda o nome do atributo).
+
 ### SEO básico
 
 `src/pages/seo.ts` gera `robots.txt`, `sitemap.xml` e `rss.xml` direto do índice de `posts` publicados — nada hardcoded além das páginas estáticas (`/`, `/arquivo`, `/assinar`, `/eu`). `site.url` em `src/config.ts` é usado pra montar URLs absolutas (canonical, og:url, links do RSS) — hoje assume o domínio do homelab (`ocnaibill.dev`) como placeholder até ter o domínio final do Caderno.
