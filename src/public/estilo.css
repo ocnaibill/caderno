@@ -45,17 +45,33 @@
   /* "Physical Sheet Elevation" (DESIGN.md > Elevation): nunca blur, só um
      offset seco de 2px — usado em qualquer controle "flutuante". */
   --sombra-seca: 0 2px 0 0 var(--color-surface-container-high);
+
+  /* Multiplicador do Aa+ — fica em 1 em todo o site; só os containers
+     escopados (.folha__leitura/.folha__sidebar com data-tamanho="grande")
+     sobrescrevem isso. Ver regra logo abaixo. */
+  --escala-texto: 1;
 }
 
-/* Fonte (Serif/Mono): troca só a variável, então tudo que usa
-   var(--fonte-serif) — título, corpo, headlines — acompanha. */
-html[data-fonte="mono"] {
+/* Controles do leitor (Serif/Mono, Aa/Aa+, tom) — escopados só à Folha
+   (.folha__leitura = título/subtítulo/autoria/corpo; .folha__sidebar =
+   anotações/seções), nunca ao <html>/<body>. De propósito: é uma
+   preferência de leitura daquela folha, não do site inteiro, e não deve
+   vazar pra áreas de UI/interação como o comentário ("Las Cartas") — ver
+   docs/ARQUITETURA.md. */
+.folha__leitura[data-fonte="mono"],
+.folha__sidebar[data-fonte="mono"] {
   --fonte-serif: var(--fonte-mono);
+}
+
+.folha__leitura[data-tamanho="grande"],
+.folha__sidebar[data-tamanho="grande"] {
+  --escala-texto: 1.125;
 }
 
 /* Tom "Sépia" — mesmo esquema claro, só com fundo mais quente
    (valores literais do protótipo: #F3ECE1). */
-html[data-tema="sepia"] {
+.folha__leitura[data-tema="sepia"],
+.folha__sidebar[data-tema="sepia"] {
   --color-surface: #f3ece1;
   --color-background: #f3ece1;
   --color-surface-container-low: #ece3d4;
@@ -72,7 +88,8 @@ html[data-tema="sepia"] {
    destacar em fundo escuro) — não são números inventados. O resto da
    escada de superfícies foi derivado a partir do #201D1A do protótipo.
    Ver docs/ARQUITETURA.md. */
-html[data-tema="escuro"] {
+.folha__leitura[data-tema="escuro"],
+.folha__sidebar[data-tema="escuro"] {
   --color-surface: #201d1a;
   --color-background: #201d1a;
   --color-surface-container-lowest: #171512;
@@ -91,15 +108,25 @@ html[data-tema="escuro"] {
   --color-selecao: #4b443b;
 }
 
-* {
-  box-sizing: border-box;
+/* O container escopado precisa da própria cor de fundo/texto — como a
+   troca de tema não é mais no <html>/<body>, nada repinta sozinho. */
+.folha__leitura,
+.folha__sidebar {
+  background: var(--color-background);
+  color: var(--color-on-surface);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.folha__leitura {
+  padding: var(--espaco-lg);
+  margin: calc(var(--espaco-lg) * -1);
+  border-radius: var(--raio-xl);
+}
+.folha__sidebar {
+  border-radius: var(--raio-xl);
 }
 
-html {
-  font-size: 100%; /* 16px — base do rem. Aa+ (data-tamanho="grande") escala isso. */
-}
-html[data-tamanho="grande"] {
-  font-size: 112.5%; /* ~18px */
+* {
+  box-sizing: border-box;
 }
 
 body {
@@ -151,57 +178,58 @@ img {
   white-space: nowrap;
 }
 
-/* Escala tipográfica (ver DESIGN.md > typography) — em rem de propósito:
-   é o que deixa o Aa+ (html[data-tamanho="grande"]) escalar a leitura
-   inteira só mudando o font-size do <html>. Rótulos/metadados (label-md,
-   label-sm) ficam em px, de fora do escalonamento. */
+/* Escala tipográfica (ver DESIGN.md > typography) — em rem multiplicados
+   por var(--escala-texto) (padrão 1 em todo o site). Isso deixa o Aa+
+   escalar só dentro de .folha__leitura/.folha__sidebar sem afetar o resto
+   do site, já que fora dali a variável nunca é sobrescrita. Rótulos/
+   metadados (label-md, label-sm) ficam em px, de fora do escalonamento. */
 .display-lg {
   font-weight: 400;
-  font-size: 2.125rem;
-  line-height: 2.625rem;
+  font-size: calc(2.125rem * var(--escala-texto));
+  line-height: calc(2.625rem * var(--escala-texto));
   letter-spacing: -0.01em;
   margin: 0;
 }
 @media (min-width: 900px) {
   .display-lg {
-    font-size: 3rem;
-    line-height: 3.5rem;
+    font-size: calc(3rem * var(--escala-texto));
+    line-height: calc(3.5rem * var(--escala-texto));
     letter-spacing: -0.02em;
   }
 }
 .headline-lg {
   font-weight: 400;
-  font-size: 2rem;
-  line-height: 2.5rem;
+  font-size: calc(2rem * var(--escala-texto));
+  line-height: calc(2.5rem * var(--escala-texto));
   letter-spacing: -0.015em;
   margin: 0;
 }
 .headline-md {
   font-weight: 400;
-  font-size: 1.625rem;
-  line-height: 2.125rem;
+  font-size: calc(1.625rem * var(--escala-texto));
+  line-height: calc(2.125rem * var(--escala-texto));
   letter-spacing: -0.01em;
   margin: 0;
 }
 .headline-sm {
   font-weight: 500;
-  font-size: 1.3125rem;
-  line-height: 1.75rem;
+  font-size: calc(1.3125rem * var(--escala-texto));
+  line-height: calc(1.75rem * var(--escala-texto));
   margin: 0;
 }
 .body-lg {
-  font-size: 1.25rem;
-  line-height: 2.125rem;
+  font-size: calc(1.25rem * var(--escala-texto));
+  line-height: calc(2.125rem * var(--escala-texto));
   letter-spacing: 0.005em;
 }
 .body-sm {
-  font-size: 0.9375rem;
-  line-height: 1.5rem;
+  font-size: calc(0.9375rem * var(--escala-texto));
+  line-height: calc(1.5rem * var(--escala-texto));
 }
 .quote-lg {
   font-style: italic;
-  font-size: 1.375rem;
-  line-height: 2rem;
+  font-size: calc(1.375rem * var(--escala-texto));
+  line-height: calc(2rem * var(--escala-texto));
   letter-spacing: -0.005em;
   color: var(--color-on-surface-variant);
 }
@@ -599,7 +627,7 @@ button.acao--ativa .material-symbols-outlined {
 }
 .prose h2 {
   font-family: var(--fonte-serif);
-  font-size: 26px;
+  font-size: calc(1.625rem * var(--escala-texto));
   margin-top: var(--espaco-xl);
   text-align: left;
 }

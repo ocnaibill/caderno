@@ -141,7 +141,7 @@ export function renderizarPaginaFolha(slug: string): Response {
 
   const corpoPagina = `<article class="folha">
     <div class="folha__layout">
-      <aside class="folha__sidebar">
+      <aside class="folha__sidebar" data-fonte="serif" data-tamanho="normal" data-tema="eggshell">
         ${htmlPensamentos}
         ${htmlSecoes}
       </aside>
@@ -159,7 +159,7 @@ export function renderizarPaginaFolha(slug: string): Response {
           ${renderizarControlesLeitor()}
         </div>
 
-        <div class="folha__leitura">
+        <div class="folha__leitura" data-fonte="serif" data-tamanho="normal" data-tema="eggshell">
         <h1 class="display-lg">${escapeHtml(frontmatter.titulo)}</h1>
         ${frontmatter.subtitulo ? `<p class="folha__subtitulo quote-lg">${escapeHtml(frontmatter.subtitulo)}</p>` : ""}
 
@@ -194,8 +194,25 @@ export function renderizarPaginaFolha(slug: string): Response {
 
         ${htmlRecomendacoes}
         ${htmlNavegacao}
-        ${htmlComentario}
         </div>
+        <script>
+          (function () {
+            try {
+              var alvos = [".folha__leitura", ".folha__sidebar"]
+                .map(function (s) { return document.querySelector(s); })
+                .filter(Boolean);
+              ["fonte", "tamanho", "tema"].forEach(function (grupo) {
+                var valor = localStorage.getItem("caderno:" + grupo);
+                if (!valor) return;
+                alvos.forEach(function (el) { el.setAttribute("data-" + grupo, valor); });
+              });
+            } catch (e) {
+              /* localStorage indisponível — fica na preferência padrão. */
+            }
+          })();
+        </script>
+
+        ${htmlComentario}
       </div>
     </div>
   </article>`;

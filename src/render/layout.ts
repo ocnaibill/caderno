@@ -53,19 +53,6 @@ export function layout({
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
-  <script>
-    (function () {
-      try {
-        var raiz = document.documentElement;
-        ["fonte", "tamanho", "tema"].forEach(function (grupo) {
-          var valor = localStorage.getItem("caderno:" + grupo);
-          if (valor) raiz.setAttribute("data-" + grupo, valor);
-        });
-      } catch (e) {
-        /* localStorage indisponível — fica no tema padrão. */
-      }
-    })();
-  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${escapeHtml(tituloCompleto)}</title>
   ${descricao ? `<meta name="description" content="${escapeHtml(descricao)}" />` : ""}
