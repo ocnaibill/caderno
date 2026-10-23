@@ -628,6 +628,7 @@ button.acao--ativa .material-symbols-outlined {
 }
 .prose h2 {
   font-family: var(--fonte-serif);
+  font-weight: 400; /* nunca foi definido — caía no bold padrão do navegador pra h2 */
   font-size: calc(1.625rem * var(--escala-texto));
   margin-top: var(--espaco-xl);
   text-align: left;
