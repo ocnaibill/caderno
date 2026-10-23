@@ -126,7 +126,7 @@ Além do markdown padrão, o corpo de uma folha aceita:
 - **Seção sem título visível**: `## Texto da seção {oculto}` — entra no índice "Seções desta folha" normalmente, mas o `<h2>` não aparece no corpo (fica só como âncora, visível a leitores de tela). Útil pra estruturar sem forçar um heading toda vez.
 - **Legenda de imagem**: `![alt](caminho.jpg "Texto da legenda")` — o `title` da imagem (sintaxe markdown padrão) vira uma `<figcaption>` centralizada abaixo dela.
 - **Caixa de nota**: HTML cru — `<aside class="nota">texto</aside>` ou, em itálico, `<aside class="nota nota--italico">texto</aside>`.
-- **Lista com título + corpo**: item com um parágrafo em negrito (vira o "título", cor `primary`) seguido de um parágrafo em branco (vira o "corpo", cor `on-surface-variant`):
+- **Lista com título + corpo**: item com um primeiro parágrafo (vira o "título" — cor `primary`, tamanho maior) seguido de um parágrafo em branco (vira o "corpo" — cor `on-surface-variant`). Negrito/itálico do título ficam livres: `**negrito**` e `*itálico*` funcionam normalmente ali, nenhum dos dois é forçado por CSS — escreve plano, em itálico, em negrito, como quiser:
   ```markdown
   1. **Título do item**
 
